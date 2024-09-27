@@ -31,7 +31,7 @@ body {
 h1 {
   font-size: 2.5rem; /* Increased font size */
   background: linear-gradient(to right, #6a11cb, #2575fc); /* Gradient color from purple to blue */
-  -webkit-background-clip: text; /* For Safari */
+  background-clip: text; /* For Safari */
   -webkit-text-fill-color: transparent; /* Make text transparent to show gradient */
   margin-bottom: 20px;
   font-weight: 700; /* Bold font weight */

@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import axios from "axios";
 
 function ColorInput() {
     // Create refs for each input
@@ -15,28 +16,39 @@ function ColorInput() {
         { label: 'Face 6 (Y)', color: '#ffff00' },
     ];
 
-    const validColors = ['R', 'G', 'B', 'Y', 'O', 'W'];
+    const validColors = ['W','R','G','O','B','Y'];
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async(event) => {
         event.preventDefault();
         
         const colors = faceRefs.map(ref => ref.current.value.toUpperCase()); // Convert to uppercase for validation
         const newErrors = [];
         let errorFound = false;
+        const count = new Array(6).fill(0);
         
-        colors.forEach((color, idx) => {
+        colors.forEach((face, idx) => {
             // Check if input is 9 characters long
-            if (color.length !== 9) {
+            if (face.length !== 9) {
                 newErrors[idx] = "9 Colors required";
                 errorFound = true;
             } 
             // Check if input contains only valid characters
-            else if (![...color].every(char => validColors.includes(char))) {
+            else if (![...face].every(char => validColors.includes(char))) {
                 newErrors[idx] = "Only R, G, B, Y, O, W are allowed";
                 errorFound = true;
             } 
             else {
-                newErrors[idx] = ""; // Clear any previous errors for valid input
+                //Check whether no color occurs more than 9 times
+                face.split('').forEach((color) => {
+                    const i = validColors.indexOf(color);
+                    count[i]++;
+                    if (count[i] > 9) {
+                        newErrors[idx] = "Each Color can occur max 9 times";
+                        errorFound = true;
+                    }
+                });
+                if(!errorFound)
+                    newErrors[idx] = ""; // Clear any previous errors for valid input
             }
         });
 
@@ -44,6 +56,9 @@ function ColorInput() {
         
         if (!errorFound) {
             console.log("Successful"); 
+            const response = await axios.post('http://localhost:3000/solve-cube',{colors});
+
+            console.log("Response from server:", response.data);
         } else {
             console.log("Invalid Input"); 
         }
