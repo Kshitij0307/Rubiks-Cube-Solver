@@ -1,33 +1,42 @@
 import java.util.*;
 public class rubik {
-    static class CubeState{
-        String[][] cube;
+    static class Cube{
+        int[][] cubeState;
+        Cube parent;
+        int moveApplied;
         int moves;
 
-        CubeState(String[][] c,int m){
-            cube = c;
+        Cube(int[][] c,Cube p,int move,int m){
+            cubeState = c;
+            parent = p;
+            moveApplied = move;
             moves = m;
         }
     }
-    //    public static String[][] cube = new String[6][9];
-    public static String[][] initializeSolvedCube(){
-        String[][] cube = new String[6][9];
+    //    public static int[][] cube = new int[6][9];
+    public static int[][] initializeSolvedCube(){
+        int[][] cube = new int[6][9];
         // Faces = White , Red , Green , Orange , Blue , Yellow ;
-        String[] colors = {"W","R","G","O","B","Y"};
+//        int[] colors = {"W","R","G","O","B","Y"};
         for(int i=0;i<6;i++){
             for(int j=0;j<9;j++){
-                cube[i][j] = colors[i];
+                cube[i][j] = i+1;
             }
         }
         return cube;
     }
-    public static void printCube(String[][] cube){
+    public static void printCube(int[][] cube){
+        String[] colors = {"W","R","G","O","B","Y"};
         for(int i=0;i<6;i++){
-            System.out.println(Arrays.toString(cube[i]));
+            for(int j=0;j<9;j++){
+                System.out.print(colors[cube[i][j]-1] + " ");
+            }
+            System.out.println();
         }
     }
-    public static void rotateFaceClockWise(String[][] cube,int face) {
-        String[] temp = new String[9];
+
+    public static void rotateFaceClockWise(int[][] cube,int face) {
+        int[] temp = new int[9];
         System.arraycopy(cube[face], 0, temp, 0, 9);
         cube[face][0] = temp[6];
         cube[face][1] = temp[3];
@@ -39,8 +48,8 @@ public class rubik {
         cube[face][7] = temp[5];
         cube[face][8] = temp[2];
     }
-    public static void rotateFaceAntiClockWise(String[][] cube,int face) {
-        String[] temp = new String[9];
+    public static void rotateFaceAntiClockWise(int[][] cube,int face) {
+        int[] temp = new int[9];
         System.arraycopy(cube[face], 0, temp, 0, 9);
         cube[face][0] = temp[2];
         cube[face][1] = temp[5];
@@ -52,52 +61,38 @@ public class rubik {
         cube[face][7] = temp[3];
         cube[face][8] = temp[6];
     }
-    public static String[][] U(String[][] cube){
+    public static int[][] U(int[][] cube){
         rotateFaceClockWise(cube,0);
 
-        String temp[] = new String[3];
-        for(int j=0;j<3;j++){
-            temp[j] = cube[1][j];
-        }
+        int[] temp = new int[3];
+        System.arraycopy(cube[1], 0, temp, 0, 3);
         for(int i=1;i<4;i++){
-            for(int j=0;j<3;j++){
-                cube[i][j] = cube[i+1][j];
-            }
+            System.arraycopy(cube[i + 1], 0, cube[i], 0, 3);
         }
-        for(int j=0;j<3;j++){
-            cube[4][j] = temp[j];
-        }
+        System.arraycopy(temp, 0, cube[4], 0, 3);
         return cube;
     }
-    public static String[][] UPrime(String[][] cube){
+    public static int[][] UPrime(int[][] cube){
         rotateFaceAntiClockWise(cube,0);
 
-        String temp[] = new String[3];
-        for(int j=0;j<3;j++){
-            temp[j] = cube[4][j];
-        }
+        int[] temp = new int[3];
+        System.arraycopy(cube[4], 0, temp, 0, 3);
         for(int i=4;i>1;i--){
-            for(int j=0;j<3;j++){
-                cube[i][j] = cube[i-1][j];
-            }
+            System.arraycopy(cube[i - 1], 0, cube[i], 0, 3);
         }
-        for(int j=0;j<3;j++){
-            cube[1][j] = temp[j];
-        }
+        System.arraycopy(temp, 0, cube[1], 0, 3);
         return cube;
     }
 
-    public static String[][] D(String[][] cube){
+    public static int[][] D(int[][] cube){
         rotateFaceClockWise(cube,5);
 
-        String temp[] = new String[3];
+        int[] temp = new int[3];
         for(int j=6;j<9;j++){
             temp[j%3] = cube[4][j];
         }
         for(int i=4;i>1;i--){
-            for(int j=6;j<9;j++){
-                cube[i][j] = cube[i-1][j];
-            }
+            System.arraycopy(cube[i - 1], 6, cube[i], 6, 3);
         }
         for(int j=6;j<9;j++) {
             cube[1][j] = temp[j % 3];
@@ -106,17 +101,15 @@ public class rubik {
         return cube;
     }
 
-    public static String[][] DPrime(String[][] cube){
+    public static int[][] DPrime(int[][] cube){
         rotateFaceAntiClockWise(cube,5);
 
-        String temp[] = new String[3];
+        int[] temp = new int[3];
         for(int j=6;j<9;j++){
             temp[j%3] = cube[1][j];
         }
         for(int i=1;i<4;i++){
-            for(int j=6;j<9;j++){
-                cube[i][j] = cube[i+1][j];
-            }
+            System.arraycopy(cube[i + 1], 6, cube[i], 6, 3);
         }
         for(int j=6;j<9;j++){
             cube[4][j] = temp[j%3];
@@ -125,10 +118,10 @@ public class rubik {
         return cube;
     }
 
-    public static String[][] F(String[][] cube) {
+    public static int[][] F(int[][] cube) {
         rotateFaceClockWise(cube,1);
 
-        String temp[] = new String[3];
+        int[] temp = new int[3];
         for(int j=6;j<9;j++){
             temp[j%3] = cube[0][j];
         }
@@ -152,10 +145,10 @@ public class rubik {
 
     }
 
-    public static String[][] FPrime(String[][] cube){
+    public static int[][] FPrime(int[][] cube){
         rotateFaceAntiClockWise(cube,1);
 
-        String temp[] = new String[3];
+        int[] temp = new int[3];
         for(int j=6;j<9;j++){
             temp[j%3] = cube[0][j];
         }
@@ -179,10 +172,10 @@ public class rubik {
 
     }
 
-    public static String[][] B(String[][] cube){
+    public static int[][] B(int[][] cube){
         rotateFaceClockWise(cube,3);
 
-        String temp[] = new String[3];
+        int[] temp = new int[3];
         for(int j=0;j<3;j++){
             temp[j%3] = cube[0][j];
         }
@@ -207,10 +200,10 @@ public class rubik {
 
     }
 
-    public static String[][] BPrime(String[][] cube) {
+    public static int[][] BPrime(int[][] cube) {
         rotateFaceAntiClockWise(cube,3);
 
-        String temp[] = new String[3];
+        int[] temp = new int[3];
         for (int j = 0; j < 3; j++) {
             temp[j % 3] = cube[0][j];
         }
@@ -233,10 +226,10 @@ public class rubik {
 
         return cube;
     }
-    public static String[][] R(String[][] cube) {
+    public static int[][] R(int[][] cube) {
         rotateFaceClockWise(cube,2);
 
-        String temp[] = new String[3];
+        int[] temp = new int[3];
         temp[0] = cube[0][2];
         temp[1] = cube[0][5];
         temp[2] = cube[0][8];
@@ -259,10 +252,10 @@ public class rubik {
 
         return cube;
     }
-    public static String[][] RPrime(String[][] cube) {
+    public static int[][] RPrime(int[][] cube) {
         rotateFaceAntiClockWise(cube,2);
 
-        String temp[] = new String[3];
+        int[] temp = new int[3];
         temp[0] = cube[0][2];
         temp[1] = cube[0][5];
         temp[2] = cube[0][8];
@@ -285,10 +278,10 @@ public class rubik {
 
         return cube;
     }
-    public static String[][] L(String[][] cube) {
+    public static int[][] L(int[][] cube) {
         rotateFaceClockWise(cube,4);
 
-        String temp[] = new String[3];
+        int[] temp = new int[3];
         temp[0] = cube[0][0];
         temp[1] = cube[0][3];
         temp[2] = cube[0][6];
@@ -311,10 +304,10 @@ public class rubik {
 
         return cube;
     }
-    public static String[][] LPrime(String[][] cube) {
+    public static int[][] LPrime(int[][] cube) {
         rotateFaceAntiClockWise(cube,4);
 
-        String temp[] = new String[3];
+        int[] temp = new int[3];
         temp[0] = cube[0][0];
         temp[1] = cube[0][3];
         temp[2] = cube[0][6];
@@ -338,94 +331,118 @@ public class rubik {
         return cube;
     }
 
-    public static String[][] performMove(String[][] cube,int n){
-        switch(n){
-            case 1:
-                return U(cube);
-            case 2:
-                return UPrime(cube);
-            case 3:
-                return D(cube);
-            case 4:
-                return DPrime(cube);
-            case 5:
-                return F(cube);
-            case 6:
-                return FPrime(cube);
-            case 7:
-                return B(cube);
-            case 8:
-                return BPrime(cube);
-            case 9:
-                return R(cube);
-            case 10:
-                return RPrime(cube);
-            case 11:
-                return L(cube);
-            case 12:
-                return LPrime(cube);
-        }
-        return new String[0][];
+    public static int[][] performMove(int[][] cube,int n){
+        return switch (n) {
+            case 1 -> U(cube);
+            case 2 -> UPrime(cube);
+            case 3 -> D(cube);
+            case 4 -> DPrime(cube);
+            case 5 -> F(cube);
+            case 6 -> FPrime(cube);
+            case 7 -> B(cube);
+            case 8 -> BPrime(cube);
+            case 9 -> R(cube);
+            case 10 -> RPrime(cube);
+            case 11 -> L(cube);
+            case 12 -> LPrime(cube);
+            default -> new int[0][];
+        };
     }
-    public static String convertCubeToString(String[][] cube) {
+    public static String convertCubeToString(int[][] cube) {
         StringBuilder sb = new StringBuilder();
-        for (String[] face : cube) {
-            for (String sticker : face) {
+        for (int[] face : cube) {
+            for (int sticker : face) {
                 sb.append(sticker);
             }
         }
         return sb.toString();
     }
-    public static String[][] deepCopyCube(String[][] cube) {
-        String[][] copy = new String[cube.length][];
+    public static int[][] deepCopyCube(int[][] cube) {
+        int[][] copy = new int[cube.length][];
         for (int i = 0; i < cube.length; i++) {
             copy[i] = Arrays.copyOf(cube[i], cube[i].length);
         }
         return copy;
     }
+    public static void findPath(Cube c){
+        ArrayList<Integer> path = new ArrayList<>();
 
-    public static void solveCube(String[][] cube){
-        String[][] solvedState = initializeSolvedCube();
+        while(c.parent != null){
+            path.add(0,c.moveApplied);
+            c = c.parent;
+        }
+
+        System.out.println(path);
+
+    }
+
+    public static void solveCube(int[][] cube){
+        int[][] solvedState = initializeSolvedCube();
 
         HashSet<String> vis = new HashSet<>();
-        Queue<CubeState> q = new LinkedList<>();
-        q.add(new CubeState(deepCopyCube(cube), 0));
+        Queue<Cube> q = new LinkedList<>();
+        q.add(new Cube(deepCopyCube(cube),null,0, 0));
 
         while(!q.isEmpty()){
-            CubeState curState = q.poll();
+            Cube front = q.poll();
 
-            if(Arrays.deepEquals(cube, solvedState)){
-                System.out.println("Cube Solved with total moves =" + curState.moves);
+            if (Arrays.deepEquals(front.cubeState, solvedState)) {
+                System.out.println("Cube Solved with total moves = " + front.moves);
+                findPath(front);
                 return;
             }
 
-            String cubeString = convertCubeToString(curState.cube);
+            String cubeString = convertCubeToString(front.cubeState);
             if (!vis.contains(cubeString)) {
                 vis.add(cubeString);
                 for (int i = 1; i <= 12; i++) {
-                    String[][] newState = deepCopyCube(curState.cube);
+                    int[][] newState = deepCopyCube(front.cubeState);
                     newState = performMove(newState, i);
-                    q.add(new CubeState(newState, curState.moves + 1));
+                    q.add(new Cube(newState, front,i,front.moves + 1));
                 }
             }
         }
 
     }
 
+    public static int[][] testing(int[][] cube,String s){
+        String[] str = s.split(" ");
+        for(String i:str){
+            int n = Integer.parseInt(i);
+            switch (n) {
+                case 1 -> cube = U(cube);
+                case 2 -> cube = UPrime(cube);
+                case 3 -> cube = D(cube);
+                case 4 -> cube = DPrime(cube);
+                case 5 -> cube = F(cube);
+                case 6 -> cube = FPrime(cube);
+                case 7 -> cube = B(cube);
+                case 8 -> cube = BPrime(cube);
+                case 9 -> cube = R(cube);
+                case 10 -> cube = RPrime(cube);
+                case 11 -> cube = L(cube);
+                case 12 -> cube = LPrime(cube);
+                default -> System.out.println("Invalid Number");
+            }
+        }
+        return cube;
+    }
+
     public static void main(String[] args) {
-//        initializeCube();
-        String[][] cube = {
-                {"G", "O", "O", "G", "W", "B", "Y", "G", "R"},  // GOOGWBYGR
-                {"G", "W", "Y", "G", "R", "Y", "O", "R", "Y"},  // GWYGRYORY
-                {"G", "W", "B", "O", "G", "R", "B", "G", "B"},  // GWBOGRBGB
-                {"W", "B", "W", "B", "O", "O", "W", "B", "O"},  // WBWBOOWBO
-                {"R", "O", "O", "W", "B", "Y", "G", "R", "Y"},  // ROOWBYGRY
-                {"B", "W", "R", "Y", "Y", "R", "W", "Y", "R"}   // BWRYYRWYR
+        int[][] cube = {
+                {1, 1, 1, 1, 1, 1, 1, 1, 1},  // White face (1)
+                {2, 2, 2, 2, 2, 2, 2, 2, 2},  // Red face (2)
+                {3, 3, 3, 3, 3, 3, 3, 3, 3},  // Green face (3)
+                {4, 4, 4, 4, 4, 4, 4, 4, 4},  // Orange face (4)
+                {5, 5, 5, 5, 5, 5, 5, 5, 5},  // Blue face (5)
+                {6, 6, 6, 6, 6, 6, 6, 6, 6}   // Yellow face (6)
         };
 
-        solveCube(cube);
+
+//        printCube(testing(cube,"24"));
+        solveCube(testing(cube,"6 6 10 12 12 7"));
 
 
-//        printCube();
+//        printCube(cube);
     }
 }
