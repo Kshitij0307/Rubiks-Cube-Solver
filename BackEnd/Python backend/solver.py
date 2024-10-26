@@ -1,58 +1,10 @@
 import cv2 as cv
-import numpy as np
+import sys
+from helper_methods import print_cube, solve_cube,store_face,draw_contours
+from config import color_initials, color_ranges
 
-cap = cv.VideoCapture(0)
+cap = cv.VideoCapture(1)
 
-def print_cube(cube_faces):
-    # Convert the face arrays to 3x3 grid
-    def format_face(face):
-        return [face[:3], face[3:6], face[6:]]
-
-    # Get each face in grid format
-    up = format_face(cube_faces[0])    # White
-    right = format_face(cube_faces[1])   # Red
-    front = format_face(cube_faces[2])  # Green
-    down = format_face(cube_faces[3])  # Yellow
-    left = format_face(cube_faces[4])   # Orange
-    back = format_face(cube_faces[5]) # Blue
-
-    # Print the cube in a cross layout
-    print("Cube Faces:")
-
-    # Top face (White)
-    print("    ", " ".join(up[0]))
-    print("    ", " ".join(up[1]))
-    print("    ", " ".join(up[2]))
-
-    # Left (Orange), Front (Green), Right (Red), Back (Blue) faces in one row
-    for i in range(3):
-        print(" ".join(left[i]), " ", " ".join(front[i]), " ", " ".join(right[i]), " ", " ".join(back[i]))
-
-    # Bottom face (Yellow)
-    print("    ", " ".join(down[0]))
-    print("    ", " ".join(down[1]))
-    print("    ", " ".join(down[2]))
-
-color_ranges = {
-    'white': (np.array([0, 0, 200]), np.array([180, 30, 255])),
-    'red': [
-        (np.array([0, 100, 100]), np.array([10, 255, 255])),  # First red range
-        (np.array([170, 100, 100]), np.array([180, 255, 255]))  # Second red range
-    ],
-    'green': (np.array([40, 100, 100]), np.array([85, 255, 255])),
-    'orange': (np.array([10, 150, 150]), np.array([25, 255, 255])),
-    'blue': (np.array([100, 150, 100]), np.array([130, 255, 255])),
-    'yellow': (np.array([20, 150, 150]), np.array([30, 255, 255]))
-}
-
-color_initials = {
-    'white': 'W',
-    'red': 'R',
-    'green': 'G',
-    'orange': 'O',
-    'blue': 'B',
-    'yellow': 'Y'
-}
 
 # Initialize a 6x9 grid for cube colors
 cube_faces = [['' for _ in range(9)] for _ in range(6)]
@@ -66,20 +18,15 @@ while True:
         noiseless_frame = cv.fastNlMeansDenoising(grey_frame, None, 20, 7, 7)
         blurred_frame = cv.GaussianBlur(noiseless_frame, (3, 3), 0)  # Use Gaussian Blur
         canny_frame = cv.Canny(blurred_frame, 50, 150)
-        cv.imshow('canny',canny_frame)
-        dilated_frame = cv.dilate(canny_frame, cv.getStructuringElement(cv.MORPH_RECT, (5,5)))
+        dilated_frame = cv.dilate(canny_frame, cv.getStructuringElement(cv.MORPH_RECT, (5, 5)))
 
         contours, _ = cv.findContours(dilated_frame, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
-        # Showing all the contours found
-        contour_frame = cv.drawContours(frame.copy(), contours, -1, (0, 255, 0), 2)
-        cv.imshow('Contours', contour_frame)
-
         sticker_frame = frame.copy()
-        detected_colors = []  #empty color list for each frame
+        detected_colors = []  # Empty color list for each frame
 
         for contour in contours:
-            # Get a polygon approximation for the contour 
+            # Get a polygon approximation for the contour
             approx = cv.approxPolyDP(contour, 0.1 * cv.arcLength(contour, True), True)
 
             # Check the contour has four sides
@@ -116,7 +63,7 @@ while True:
 
                     # Determine the dominant color (highest ratio)
                     detected_color = max(color_areas, key=color_areas.get)
-                    detected_colors.append(color_initials[detected_color])
+                    detected_colors.append((color_initials[detected_color], x, y, w, h))
 
                     # Put the detected color text on the image (white text with black outline)
                     cv.putText(sticker_frame, detected_color, (x + 10, y + 10),
@@ -127,23 +74,47 @@ while True:
         # Check for user input
         key = cv.waitKey(1) & 0xFF
         if key == ord('c'):  # If 'c' key is pressed
-            cv.imshow('Detected Colors', sticker_frame)
-            cv.waitKey(0)
-            cv.destroyWindow('Detected Colors')
-            if len(detected_colors) == 9:  # Check if exactly 9 colors are detected
-                print("9 colors detected. Proceeding to store colors.")
-                print("Detected colors:", detected_colors)
-                cube_faces[facecount] = detected_colors
-                facecount += 1
 
-                # Store colors in cube_faces or perform further processing here
-                # Example: Assign detected_squares to a specific face
-                # cube_faces[face_index] = [color for color, _ in detected_squares]
+            if len(detected_colors) == 9:  # Check if exactly 9 colors are detected
+
+                # Sort detected colors based on their x-coordinates first, then y-coordinates
+                detected_colors_sorted_x = sorted(detected_colors, key=lambda item: item[1])
+                detected_colors_sorted_y = sorted(detected_colors, key=lambda item: item[2])
+
+                # Define the top, middle, and bottom rows
+                sorted_rows = []
+                for i in range(0, 9, 3):
+                    unsorted_row = [detected_colors_sorted_y[i], detected_colors_sorted_y[i + 1], detected_colors_sorted_y[i + 2]]
+                    # Sort on x-position and append
+                    sorted_rows.append(sorted(unsorted_row, key=lambda item: item[1]))
+
+                # Re-order the list of square contours using sequence above
+                detected_colors = sorted_rows[0] + sorted_rows[1] + sorted_rows[2]
+
+                print("9 colors detected. Proceeding to store colors.")
+                print("Detected color codes:", ' '.join([color[0] for color in detected_colors]))
+                facecount = store_face(cube_faces,detected_colors,facecount)
+                draw_contours(sticker_frame, detected_colors)
+                cv.imshow('Detected Colors', sticker_frame)
+                cv.waitKey(0)
+                cv.destroyWindow('Detected Colors')
+
             else:
                 print(f"Error: Detected {len(detected_colors)} colors. Please ensure 9 colors are visible.")
             if facecount == 6:
                 print("Cube faces detected successfully!")
                 print_cube(cube_faces)
+                res,msg,move_count,moves = solve_cube(cube_faces)
+                print()
+                if(res):
+                    print(f'Cube solved in {move_count} moves:')
+                    print(moves)
+                else:
+                    print(msg)
+                print()
+                # Exit the program
+                sys.exit()  # Terminate the program
+
         if key == ord('q'):  # If 'q' key is pressed, break the loop
             print("Cube detection aborted.")
             break
