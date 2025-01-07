@@ -1,7 +1,6 @@
-import * as THREE from "three";
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-// Add these at the very top of your file, before any other code
 let moveHistory = [];
 let moveCount = 0;
 let rotationArrow = null;
@@ -12,7 +11,6 @@ let isPaused = false;
 let currentMoveIndex = 0;
 let currentMoveSequence = [];
 
-// Rename the colors object for the cube faces to avoid conflict
 const cubeColors = {
   white: 0xffffff, // Pure white
   green: 0x1c9e37, // Brighter green
@@ -22,7 +20,6 @@ const cubeColors = {
   yellow: 0xffd700, // Bright yellow, closer to gold
 };
 
-// Remove colorMap from the top and move it after cubeColors definition
 const colorMap = {
   [cubeColors.white]: "W", // Up
   [cubeColors.green]: "G", // Front
