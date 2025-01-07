@@ -1,5 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { OrbitControls } from './controls/OrbitControls.js';  // Adjust path as needed
 
 let moveHistory = [];
 let moveCount = 0;
@@ -219,7 +219,6 @@ function createArrowForFace(face, clockwise) {
 
   // Increased offset to prevent clipping
   const offset = 2.5; // Increased from 1.6 to 2.5
-
   // Position the arrow based on face with adjusted distances
   switch (face) {
     case "front":
@@ -1155,10 +1154,15 @@ function toggleSolutionState(showSolution, moveCount = 0) {
   const moveInput = document.querySelector("textarea");
 
   // Add safety check for all elements
-  if (!movesCountContainer || !moveButton || !moveInput) {
-    console.warn("Required elements not found");
-    return;
-  }
+  // if (!movesCountContainer || !moveButton || !moveInput) {
+  //   if(!movesCountContainer)
+  //     console.warn("Required elements not found movesCountContainer");
+  //   else if(!moveButton)
+  //     console.warn("Required elements not found moveButton");
+  //   else
+  //     console.warn("Required elements not found moveInput");
+  //   return;
+  // }
 
   if (showSolution) {
     movesCountContainer.style.display = "block";
@@ -1166,7 +1170,8 @@ function toggleSolutionState(showSolution, moveCount = 0) {
     moveButton.textContent = "Show Steps";
     moveInput.style.height = "clamp(35px, 6vh, 45px)";
   } else {
-    movesCountContainer.style.display = "none";
+    if(movesCountContainer)
+      movesCountContainer.style.display = "none";
     moveButton.textContent = "Execute Moves";
     moveInput.style.height = "clamp(45px, 8vh, 60px)";
   }
@@ -1457,21 +1462,26 @@ function applyCubeString(cubeString) {
 }
 
 window.addEventListener('load', () => {
-  
-const moveControls = document.getElementById("moveControls");
-moveControls.style.display = "none";
+  // console.log("Reload")
+  const moveControls = document.getElementById("moveControls");
+  moveControls.style.display = "none";
+  const moveInput = document.querySelector("textarea");
+  if (moveInput) {
+    moveInput.value = "";
+  }
+
   // Parse the URL for the 'cubeString' query parameter
   const urlParams = new URLSearchParams(window.location.search);
   const cubeString = urlParams.get('cubeString');
 
   if (cubeString) {
-      console.log('Retrieved cube string:', cubeString);
+      // console.log('Retrieved cube string:', cubeString);
       // Apply the cube state to your Rubik's Cube visualization
       applyCubeString(cubeString);
 
       // Optionally clear the URL for a clean look (removes ?cubeString=...)
       window.history.replaceState({}, document.title, window.location.pathname);
   } else {
-      console.log('No cube string found in the URL.');
+      // console.log('No cube string found in the URL.');
   }
 });
