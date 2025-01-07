@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.130.1/build/three.module.js';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 // Add these at the very top of your file, before any other code
