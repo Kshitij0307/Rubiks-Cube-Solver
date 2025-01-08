@@ -56,7 +56,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = ['.vercel.app', '.now.sh', 'localhost', '127.0.0.1']
+CORS_ALLOWED_ORIGINS = [
+    'https://rubiks-cube-solver-flax.vercel.app',
+    'https://*.vercel.app',
+    'https://*.now.sh',
+    'http://127.0.0.1',
+    'http://localhost:5173',
+]
 
 ROOT_URLCONF = 'cube_backend.urls'
 
