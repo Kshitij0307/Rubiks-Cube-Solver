@@ -1,0 +1,10 @@
+{
+    "version": 2,
+    "builds": [
+      { "src": "cube_backend/asgi.py", "use": "@vercel/python" }
+    ],
+    "routes": [
+      { "src": "/(.*)", "dest": "cube_backend/asgi.py" }
+    ]
+  }
+  
