@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-5&m@$*+hf*x2*hq^d5(l&yljm7+mbp^i3enh7_14dul+3e_uq9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['your-app-name.onrender.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -62,6 +62,8 @@ CORS_ALLOWED_ORIGINS = [
     'https://*.now.sh',
     'http://127.0.0.1',
     'http://localhost:5173',
+    'http://localhost:5174'
+
 ]
 
 ROOT_URLCONF = 'cube_backend.urls'

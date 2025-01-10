@@ -1,0 +1,1 @@
+web: gunicorn cube_backend.wsgi:application
