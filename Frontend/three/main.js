@@ -1271,7 +1271,7 @@ solveButton.addEventListener("click", async () => {
         solveButton.textContent = "Solving...";
         solveButton.style.opacity = "0.7";
 
-        const response = await fetch("http://127.0.0.1:8000/api/solve/", {
+        const response = await fetch("https://rubiks-cube-solver-eyq4.onrender.com/api/solve/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -1327,7 +1327,7 @@ scanButton.id = "scanButton";
 scanButton.textContent = "Scan";
 
 scanButton.addEventListener("click", () => {
-    window.location.href = "http://127.0.0.1:8000/api/scan/";
+    window.location.href = "https://rubiks-cube-solver-eyq4.onrender.com/api/scan/";
 });
 
 const existingMovesContainer = document.querySelector("#movesCountContainer");
