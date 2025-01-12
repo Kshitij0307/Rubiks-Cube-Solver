@@ -50,7 +50,7 @@ try {
 
     console.log("Sending capture request...");  // Debug log
     try {
-        const response = await fetch("http://127.0.0.1:8000/api/scan/capture/", {
+        const response = await fetch("https://rubiks-cube-solver-eyq4.onrender.com/api/scan/capture/", {
         method: "POST",
         body: formData,
         headers: {
@@ -132,7 +132,7 @@ await initCamera();
 async function restartCamera() {
 try {
     console.log("Starting reset...");  // Debug log
-    const response = await fetch("http://127.0.0.1:8000/api/scan/reset/", {
+    const response = await fetch("https://rubiks-cube-solver-eyq4.onrender.com/api/scan/reset/", {
     method: "POST",
     headers: {
         "Content-Type": "application/json",
@@ -181,7 +181,7 @@ if (!lastCapturedColors) {
 }
 
 try {
-    const response = await fetch("http://127.0.0.1:8000/api/scan/verify/", {
+    const response = await fetch("https://rubiks-cube-solver-eyq4.onrender.com/api/scan/verify/", {
     method: "POST",
     headers: {
         "Content-Type": "application/json",
