@@ -62,7 +62,8 @@ CORS_ALLOWED_ORIGINS = [
     'https://*.now.sh',
     'http://127.0.0.1',
     'http://localhost:5173',
-    'http://localhost:5174'
+    'http://localhost:5174',
+    'https://rubiks-cube-solver-eyq4.onrender.com',
 
 ]
 
