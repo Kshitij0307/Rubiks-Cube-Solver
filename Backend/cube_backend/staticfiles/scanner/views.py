@@ -14,7 +14,7 @@ current_face = 0
 
 def index(request):
     return render(request,'index.html')
-
+    
 @csrf_exempt
 def capture(request):
     if request.method == 'POST':
