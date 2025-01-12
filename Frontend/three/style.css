@@ -1,347 +1,385 @@
 /* styles.css */
 body { 
-    margin: 0;
+  margin: 0;
 }
 canvas {
-    display: block; 
+  display: block; 
 }
 
 .button-container {
-    position: fixed;
-    bottom: clamp(10px, 3vh, 30px);
-    left: 50%;
-    transform: translateX(-50%);
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 12px;
-    padding: clamp(15px, 2.5vw, 25px);
-    background: rgba(20, 25, 45, 0.3);
-    backdrop-filter: blur(10px);
-    border-radius: clamp(12px, 2vw, 20px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 2px 15px rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 1000;
-  }
-  
-  button {
-    padding: clamp(12px, 1.5vh, 16px);
-    font-size: clamp(14px, 1.5vw, 16px);
-    font-weight: bold;
-    font-family: 'Arial', sans-serif;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: clamp(8px, 1.5vw, 12px);
-    background: linear-gradient(165deg, rgba(30, 35, 60, 0.95), rgba(20, 25, 45, 0.95));
-    color: rgba(255, 255, 255, 0.9);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 2px 10px rgba(255, 255, 255, 0.05);
-    position: relative;
-    overflow: hidden;
-  }
-  
-  /* Hover effect */
-  button:hover {
-    border-color: rgba(255, 255, 255, 0.25);
-    background: linear-gradient(165deg, rgba(35, 40, 65, 0.95), rgba(25, 30, 50, 0.95));
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35), inset 0 2px 12px rgba(255, 255, 255, 0.08);
-  }
-  
-  /* Active/click effect */
-  button:active {
-    transform: scale(0.95);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 1px 5px rgba(255, 255, 255, 0.05);
-  }
-
+  position: fixed;
+  bottom: clamp(10px, 3vh, 30px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+  padding: clamp(5px, 2.5vw, 15px);
+  background: rgba(20, 25, 45, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: clamp(12px, 2vw, 20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 2px 15px rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 1000;
+}
   /* Container for input and button */
 #inputContainer {
-    position: fixed;
-    bottom: clamp(10px, 3vh, 30px);
-    left: clamp(30px, 8vw, 60px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: clamp(8px, 1vh, 10px);
-    padding: clamp(15px, 2vw, 20px);
-    z-index: 1000;
-    width: clamp(200px, 22vw, 280px);
-    background: rgba(20, 25, 45, 0.3);
-    backdrop-filter: blur(10px);
-    border-radius: clamp(12px, 2vw, 20px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 2px 15px rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  /* Input styles */
-  textarea {
-    padding: clamp(12px, 1.8vh, 18px);
-    font-size: clamp(13px, 1.3vw, 15px);
-    font-family: 'Arial', sans-serif;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: clamp(8px, 1.5vw, 12px);
-    background: linear-gradient(165deg, rgba(30, 35, 60, 0.95), rgba(20, 25, 45, 0.95));
-    color: rgba(255, 255, 255, 0.9);
-    width: 100%;
-    height: clamp(45px, 8vh, 60px);
-    resize: none;
-    outline: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 2px 10px rgba(255, 255, 255, 0.05), 0 0 20px rgba(30, 35, 60, 0.5);
-    backdrop-filter: blur(5px);
-    letter-spacing: 0.5px;
-    line-height: 1.4;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-  }
-  
-  /* Placeholder styles */
-  textarea::placeholder {
-    color: rgba(255, 255, 255, 0.4);
-    letter-spacing: 0.5px;
-  }
-  
-  /* Scrollbar styles */
-  textarea::-webkit-scrollbar {
-    width: 6px;
-  }
-  textarea::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  textarea::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 3px;
-  }
-  
-  /* Button container */
-  #buttonContainer {
-    width: 80%;
-    height: clamp(35px, 4.5vw, 40px);
-    position: relative;
-    display: flex;
-    justify-content: center;
-  }
-  
-  /* Button styles */
-  #moveButton {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    padding: clamp(6px, 1vh, 10px);
-    font-size: clamp(13px, 1.3vw, 15px);
-    font-weight: bold;
-    font-family: 'Arial', sans-serif;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: clamp(6px, 1vw, 8px);
-    background: linear-gradient(135deg, rgba(30, 35, 60, 0.9), rgba(20, 25, 45, 0.9));
-    color: rgba(255, 255, 255, 0.9);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  }
-  
-  /* Control container styles */
-  #moveControls {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: none;
-    gap: clamp(5px, 1vw, 10px);
-    justify-content: space-between;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  #moveControls button {
-    padding: clamp(4px, 0.8vw, 6px);
-    width: clamp(35px, 4.5vw, 40px);
-    height: clamp(35px, 4.5vw, 40px);
-    font-family: 'Arial', sans-serif;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(30, 35, 60, 0.9), rgba(20, 25, 45, 0.9));
-    color: rgba(255, 255, 255, 0.9);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    max-width: clamp(35px, 4.5vw, 40px);
-    margin: 0 clamp(2px, 0.3vw, 3px);
-  }
-  
-  #moveControls button img {
-    width: clamp(24px, 3vw, 32px);
-    height: clamp(24px, 3vw, 32px);
-    display: block;
-    margin: auto;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-
-  .popup {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(165deg, rgba(115, 55, 55, 0.95), rgba(95, 45, 45, 0.95));
-    color: rgba(255, 255, 255, 0.9);
-    padding: 15px 25px;
-    border-radius: 8px;
-    font-family: 'Arial', sans-serif;
-    font-size: 14px;
-    z-index: 10000;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-  }
-  #movesCountContainer {
-    width: 100%;
-    padding: 8px;
-    font-size: clamp(13px, 1.3vw, 15px);
-    color: rgba(255, 255, 255, 0.9);
-    text-align: center;
-    display: none;
-    margin-bottom: 5px;
-  }
+position: fixed;
+bottom: clamp(10px, 3vh, 30px);
+left: clamp(130px, 8vw, 60px);
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: clamp(8px, 1vh, 10px);
+padding: clamp(15px, 2vw, 20px);
+z-index: 1000;
+width: clamp(200px, 20vw, 280px);
+background: rgba(20, 25, 45, 0.3);
+backdrop-filter: blur(10px);
+border-radius: clamp(12px, 2vw, 20px);
+box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 2px 15px rgba(255, 255, 255, 0.05);
+border: 1px solid rgba(255, 255, 255, 0.1);
+}
 /* Grid Container */
 #gridContainer {
-    position: fixed;
-    bottom: calc(clamp(10px, 3vh, 30px) + clamp(10px, 1vh, 20px));
-    left: calc(50% + clamp(150px, 18vw, 250px));
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: clamp(10px, 1.5vw, 15px);
-    padding: clamp(15px, 2vw, 20px);
-    background: rgba(20, 25, 45, 0.3);
-    backdrop-filter: blur(10px);
-    border-radius: clamp(12px, 2vw, 20px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 1000;
+position: fixed;
+bottom: calc(clamp(10px, 3vh, 30px) + clamp(10px, 1vh, 20px));
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+grid-gap: clamp(5px, 1vw, 10px);
+padding: clamp(15px, 2vw, 20px);
+background: rgba(20, 25, 45, 0.3);
+backdrop-filter: blur(10px);
+border-radius: clamp(12px, 2vw, 20px);
+box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+border: 1px solid rgba(255, 255, 255, 0.1);
+z-index: 1000;
 }
+
+/* Large screens (Laptops/Desktops) */
+@media (min-width: 1024px) {
+#gridContainer {
+  left: calc(50% + clamp(210px, 8vw, 250px));
+}
+} 
+
+/* Medium screens (Tablets) */
+@media (min-width: 768px) and (max-width: 1023px) {
+#inputContainer {
+  left: clamp(200px, 8vw, 60px);
+  width: clamp(200px, 22vw, 280px);
+}
+#gridContainer {
+  right: calc(clamp(235px, 8vh, 60px));
+}
+}
+
+/* Small screens (Phones) */
+@media (max-width: 767px) {
+.button-container {
+  bottom: clamp(250px, 3vh, 30px);
+  gap: 15px; 
+}
+#inputContainer {
+  left: clamp(150px, 8vw, 60px);
+  width: clamp(250px, 22vw, 280px);
+}
+#gridContainer {
+  right: calc(clamp(150px, 8vh, 60px));
+  width: clamp(250px, 22vw, 280px);
+}
+
+}
+
+
+button {
+  padding: clamp(12px, 1.5vh, 16px);
+  font-size: clamp(14px, 1.5vw, 16px);
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: clamp(8px, 1.5vw, 12px);
+  background: linear-gradient(165deg, rgba(30, 35, 60, 0.95), rgba(20, 25, 45, 0.95));
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 2px 10px rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hover effect */
+button:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: linear-gradient(165deg, rgba(35, 40, 65, 0.95), rgba(25, 30, 50, 0.95));
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35), inset 0 2px 12px rgba(255, 255, 255, 0.08);
+}
+
+/* Active/click effect */
+button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 1px 5px rgba(255, 255, 255, 0.05);
+}
+
+
+
+
+
+/* Input styles */
+textarea {
+  padding: clamp(12px, 1.8vh, 18px);
+  font-size: clamp(13px, 1.3vw, 15px);
+  font-family: 'Arial', sans-serif;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: clamp(8px, 1.5vw, 12px);
+  background: linear-gradient(165deg, rgba(30, 35, 60, 0.95), rgba(20, 25, 45, 0.95));
+  color: rgba(255, 255, 255, 0.9);
+  width: 100%;
+  height: clamp(45px, 8vh, 60px);
+  resize: none;
+  outline: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 2px 10px rgba(255, 255, 255, 0.05), 0 0 20px rgba(30, 35, 60, 0.5);
+  backdrop-filter: blur(5px);
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+/* Placeholder styles */
+textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.5px;
+}
+
+/* Scrollbar styles */
+textarea::-webkit-scrollbar {
+  width: 6px;
+}
+textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+textarea::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+/* Button container */
+#buttonContainer {
+  width: 80%;
+  height: clamp(35px, 4.5vw, 40px);
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+/* Button styles */
+#moveButton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: clamp(6px, 1vh, 10px);
+  font-size: clamp(13px, 1.3vw, 15px);
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: clamp(6px, 1vw, 8px);
+  background: linear-gradient(135deg, rgba(30, 35, 60, 0.9), rgba(20, 25, 45, 0.9));
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Control container styles */
+#moveControls {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  gap: clamp(5px, 1vw, 10px);
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+}
+
+#moveControls button {
+  padding: clamp(4px, 0.8vw, 6px);
+  width: clamp(35px, 4.5vw, 40px);
+  height: clamp(35px, 4.5vw, 40px);
+  font-family: 'Arial', sans-serif;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(30, 35, 60, 0.9), rgba(20, 25, 45, 0.9));
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  max-width: clamp(35px, 4.5vw, 40px);
+  margin: 0 clamp(2px, 0.3vw, 3px);
+}
+
+#moveControls button img {
+  width: clamp(24px, 3vw, 32px);
+  height: clamp(24px, 3vw, 32px);
+  display: block;
+  margin: auto;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.popup {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(165deg, rgba(115, 55, 55, 0.95), rgba(95, 45, 45, 0.95));
+  color: rgba(255, 255, 255, 0.9);
+  padding: 15px 25px;
+  border-radius: 8px;
+  font-family: 'Arial', sans-serif;
+  font-size: 14px;
+  z-index: 10000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+/* #movesCountContainer {
+  width: 100%;
+  padding: 8px;
+  font-size: clamp(13px, 1.3vw, 15px);
+  color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  display: none;
+  margin-bottom: 5px;
+} */
+
 
 /* Scramble Button */
 button.scrambleButton {
-    padding: clamp(12px, 1.8vh, 18px);
-    font-size: clamp(13px, 1.3vw, 15px);
-    font-weight: bold;
-    font-family: 'Arial', sans-serif;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: clamp(8px, 1.5vw, 12px);
-    background: linear-gradient(165deg, rgba(115, 55, 55, 0.95), rgba(95, 45, 45, 0.95));
-    color: rgba(255, 255, 255, 0.9);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    box-shadow: 
-        0 4px 15px rgba(0, 0, 0, 0.3),
-        inset 0 2px 10px rgba(255, 255, 255, 0.05);
-    min-width: clamp(80px, 8vw, 120px);
+  padding: clamp(12px, 1.8vh, 18px);
+  font-size: clamp(13px, 1.3vw, 15px);
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: clamp(8px, 1.5vw, 12px);
+  background: linear-gradient(165deg, rgba(115, 55, 55, 0.95), rgba(95, 45, 45, 0.95));
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  box-shadow: 
+      0 4px 15px rgba(0, 0, 0, 0.3),
+      inset 0 2px 10px rgba(255, 255, 255, 0.05);
+  min-width: clamp(80px, 8vw, 120px);
 }
 
 button.scrambleButton:hover {
-    border-color: rgba(255, 255, 255, 0.25);
-    background: linear-gradient(165deg, rgba(125, 65, 65, 0.95), rgba(105, 55, 55, 0.95));
+  border-color: rgba(255, 255, 255, 0.25);
+  background: linear-gradient(165deg, rgba(125, 65, 65, 0.95), rgba(105, 55, 55, 0.95));
 }
 
 /* Reset Button */
 button.resetButton {
-    padding: clamp(12px, 1.8vh, 18px);
-    font-size: clamp(13px, 1.3vw, 15px);
-    font-weight: bold;
-    font-family: 'Arial', sans-serif;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: clamp(8px, 1.5vw, 12px);
-    background: linear-gradient(165deg, rgba(75, 75, 130, 0.95), rgba(55, 55, 110, 0.95));
-    color: rgba(255, 255, 255, 0.9);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    box-shadow: 
-        0 4px 15px rgba(0, 0, 0, 0.3),
-        inset 0 2px 10px rgba(255, 255, 255, 0.05);
-    min-width: clamp(80px, 8vw, 120px);
+  padding: clamp(12px, 1.8vh, 18px);
+  font-size: clamp(13px, 1.3vw, 15px);
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: clamp(8px, 1.5vw, 12px);
+  background: linear-gradient(165deg, rgba(75, 75, 130, 0.95), rgba(55, 55, 110, 0.95));
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  box-shadow: 
+      0 4px 15px rgba(0, 0, 0, 0.3),
+      inset 0 2px 10px rgba(255, 255, 255, 0.05);
+  min-width: clamp(80px, 8vw, 120px);
 }
 
 button.resetButton:hover {
-    border-color: rgba(255, 255, 255, 0.25);
-    background: linear-gradient(165deg, rgba(85, 85, 140, 0.95), rgba(65, 65, 120, 0.95));
+  border-color: rgba(255, 255, 255, 0.25);
+  background: linear-gradient(165deg, rgba(85, 85, 140, 0.95), rgba(65, 65, 120, 0.95));
 }
 
 /* Solve Button Styles */
 #solveButton {
-    padding: clamp(12px, 1.8vh, 18px);
-    font-size: clamp(13px, 1.3vw, 15px);
-    font-weight: bold;
-    font-family: 'Arial', sans-serif;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: clamp(8px, 1.5vw, 12px);
-    background: linear-gradient(165deg, rgba(55, 115, 55, 0.95), rgba(45, 95, 45, 0.95));
-    color: rgba(255, 255, 255, 0.9);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    box-shadow: 
-        0 4px 15px rgba(0, 0, 0, 0.3),
-        inset 0 2px 10px rgba(255, 255, 255, 0.05);
-    min-width: clamp(80px, 8vw, 120px);
+  padding: clamp(12px, 1.8vh, 18px);
+  font-size: clamp(13px, 1.3vw, 15px);
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: clamp(8px, 1.5vw, 12px);
+  background: linear-gradient(165deg, rgba(55, 115, 55, 0.95), rgba(45, 95, 45, 0.95));
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  box-shadow: 
+      0 4px 15px rgba(0, 0, 0, 0.3),
+      inset 0 2px 10px rgba(255, 255, 255, 0.05);
+  min-width: clamp(80px, 8vw, 120px);
 }
 
 /* Solve Button Hover Effects */
 #solveButton:hover {
-    background: linear-gradient(165deg, rgba(45, 135, 45, 0.95), rgba(35, 115, 35, 0.95));
+  background: linear-gradient(165deg, rgba(45, 135, 45, 0.95), rgba(35, 115, 35, 0.95));
 }
 
 /* Scan Button Styles */
 #scanButton {
-    padding: clamp(12px, 1.8vh, 18px);
-    font-size: clamp(13px, 1.3vw, 15px);
-    font-weight: bold;
-    font-family: 'Arial', sans-serif;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: clamp(8px, 1.5vw, 12px);
-    background: linear-gradient(165deg, rgba(55, 135, 190, 0.95), rgba(45, 115, 170, 0.95));
-    color: rgba(255, 255, 255, 0.9);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    box-shadow: 
-        0 4px 15px rgba(0, 0, 0, 0.3),
-        inset 0 2px 10px rgba(255, 255, 255, 0.05);
-    min-width: clamp(80px, 8vw, 120px);
+  padding: clamp(12px, 1.8vh, 18px);
+  font-size: clamp(13px, 1.3vw, 15px);
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: clamp(8px, 1.5vw, 12px);
+  background: linear-gradient(165deg, rgba(55, 135, 190, 0.95), rgba(45, 115, 170, 0.95));
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  box-shadow: 
+      0 4px 15px rgba(0, 0, 0, 0.3),
+      inset 0 2px 10px rgba(255, 255, 255, 0.05);
+  min-width: clamp(80px, 8vw, 120px);
 }
 
 /* Scan Button Hover Effects */
 #scanButton:hover {
-    background: linear-gradient(165deg, rgba(65, 145, 200, 0.95), rgba(55, 125, 180, 0.95));
+  background: linear-gradient(165deg, rgba(65, 145, 200, 0.95), rgba(55, 125, 180, 0.95));
 }
 
 #scanButton:active {
-    border-color: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 #movesCountContainer {
-    display: block;
-    position: fixed;
-    bottom: calc(clamp(10px, 3vh, 30px) + clamp(170px, 13vh, 145px));
-    left: clamp(30px, 8vw, 60px);
-    width: clamp(200px, 22vw, 280px);
-    font-size: clamp(13px, 1.3vw, 15px);
-    color: rgba(255, 255, 255, 0.9);
-    text-align: center;
-    padding: 5px;
-    background: rgba(20, 25, 45, 0.3);
-    backdrop-filter: blur(10px);
-    border-radius: clamp(8px, 1.5vw, 12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    z-index: 1001;
+  display: block;
+  position: fixed;
+  bottom: calc(clamp(10px, 3vh, 30px) + clamp(170px, 13vh, 145px));
+  left: clamp(135px, 8vw, 60px);
+  width: clamp(200px, 22vw, 280px);
+  font-size: clamp(13px, 1.3vw, 15px);
+  color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  padding: 5px;
+  background: rgba(20, 25, 45, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: clamp(8px, 1.5vw, 12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
 }
 
-  

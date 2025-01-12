@@ -158,28 +158,6 @@ controls.update();
 
 let ROTATION_DURATION = 300; // milliseconds
 
-// Keep only one instance of touch coordinates
-let touchStartX = 0;
-let touchStartY = 0;
-
-renderer.domElement.addEventListener("touchstart", (event) => {
-  touchStartX = event.touches[0].clientX;
-  touchStartY = event.touches[0].clientY;
-});
-
-renderer.domElement.addEventListener("touchend", (event) => {
-  const deltaX = event.changedTouches[0].clientX - touchStartX;
-  const deltaY = event.changedTouches[0].clientY - touchStartY;
-
-  if (Math.sqrt(deltaX * deltaX + deltaY * deltaY) < 50) return;
-
-  if (Math.abs(deltaX) > Math.abs(deltaY)) {
-    rotateFace(deltaX > 0 ? "right" : "left");
-  } else {
-    rotateFace(deltaY > 0 ? "down" : "up");
-  }
-});
-
 function degToRad(degrees) {
   return degrees * (Math.PI / 180);
 }
@@ -498,6 +476,24 @@ function createMoveButtons() {
 }
 createMoveButtons();
 
+function isValidMoveSequence(currentMoveSequence) {
+  const validMoves = ["u", "d", "l", "r", "f", "b"]; // Base moves
+  const validSuffixes = ["", "'", "2"]; // Optional suffixes for moves
+  
+  // Validate each move in the sequence
+  for (const move of currentMoveSequence) {
+    // Check if the move starts with a valid base move
+    const baseMove = move[0]; // First character
+    const suffix = move.slice(1); // Remaining part of the move
+    
+    if (!validMoves.includes(baseMove) || !validSuffixes.includes(suffix)) {
+      return false; // If invalid, return false immediately
+    }
+  }
+  
+  return true; // All moves are valid
+}
+
 // Update the createMoveInput function
 function createMoveInput() {
   // Create input container
@@ -531,7 +527,15 @@ function createMoveInput() {
     if (!sequence || isExecutingMoves) return;
 
     isExecutingMoves = true;
-    currentMoveSequence = sequence.split(/\s+/);
+    currentMoveSequence = sequence.split(/\s+/).map(move => move.toLowerCase())
+
+    const isValid = isValidMoveSequence(currentMoveSequence);
+    if(!isValid) {
+      showErrorPopup("Invalid move sequence");
+      isExecutingMoves = false;
+      return;
+    }
+
     currentMoveIndex = 0;
     isPaused = false;
 
@@ -1148,10 +1152,11 @@ if (!movesCountContainer) {
 
 
 // Function to toggle between normal and solution states
-function toggleSolutionState(showSolution, moveCount = 0) {
-  const movesCountContainer = document.getElementById("movesCountContainer");
+function toggleSolutionState(showSolution, moveCount = 0,moves = "") {
+  let movesCountContainer = document.getElementById("movesCountContainer");
   const moveButton = document.getElementById("moveButton");
   const moveInput = document.querySelector("textarea");
+  const moveControls = document.getElementById("moveControls");
 
   // Add safety check for all elements
   // if (!movesCountContainer || !moveButton || !moveInput) {
@@ -1164,16 +1169,29 @@ function toggleSolutionState(showSolution, moveCount = 0) {
   //   return;
   // }
 
-  if (showSolution) {
+  if (showSolution && moveCount > 0) {
+    // console.log(moveCount)
+    console.log(movesCountContainer)
+    if(movesCountContainer == null){
+        const container = document.createElement("div");
+        container.id = "movesCountContainer";
+        document.body.appendChild(container);
+        movesCountContainer = container;
+
+    }
     movesCountContainer.style.display = "block";
     movesCountContainer.textContent = `Number of Moves: ${moveCount}`;
     moveButton.textContent = "Show Steps";
-    moveInput.style.height = "clamp(35px, 6vh, 45px)";
+    // moveInput.style.height = "clamp(35px, 6vh, 45px)";
+    moveInput.value = moves;
   } else {
     if(movesCountContainer)
       movesCountContainer.style.display = "none";
+    if(moveControls)
+      moveControls.style.display = "none";
     moveButton.textContent = "Execute Moves";
     moveInput.style.height = "clamp(45px, 8vh, 60px)";
+    moveInput.value = "";
   }
 }
 
@@ -1294,23 +1312,27 @@ solveButton.addEventListener("click", async () => {
             return;
         }
 
-        const moveButton = document.getElementById("moveButton");
-        const moveControls = document.getElementById("moveControls");
-        if (moveButton && moveControls) {
-            moveButton.style.display = "block";
-            moveButton.textContent = "Show Steps";
-            moveControls.style.display = "none";
-        }
+        if(moveCount == 0)
+          showErrorPopup("Cube already in solved state");
 
-        const moveInput = document.querySelector("textarea");
-        if (moveInput) {
-            moveInput.value = data.moves;
-        }
+        toggleSolutionState(true, data.no_of_moves, data.moves);
+        // const moveButton = document.getElementById("moveButton");
+        // const moveControls = document.getElementById("moveControls");
+        // if (moveButton && moveControls) {
+        //     moveButton.style.display = "block";
+        //     moveButton.textContent = "Show Steps";
+        //     moveControls.style.display = "none";
+        // }
 
-        const container = document.createElement("div");
-        container.id = "movesCountContainer";
-        container.textContent = `Number of Moves: ${data.no_of_moves}`;
-        document.body.appendChild(container);
+        // const moveInput = document.querySelector("textarea");
+        // if (moveInput) {
+        //     moveInput.value = data.moves;
+        // }
+
+        // const container = document.createElement("div");
+        // container.id = "movesCountContainer";
+        // container.textContent = `Number of Moves: ${data.no_of_moves}`;
+        // document.body.appendChild(container);
 
     } catch (error) {
         console.error("Error solving cube:", error);
@@ -1463,12 +1485,12 @@ function applyCubeString(cubeString) {
 
 window.addEventListener('load', () => {
   // console.log("Reload")
-  const moveControls = document.getElementById("moveControls");
-  moveControls.style.display = "none";
-  const moveInput = document.querySelector("textarea");
-  if (moveInput) {
-    moveInput.value = "";
-  }
+  
+  // const moveInput = document.querySelector("textarea");
+  // if (moveInput) {
+  //   moveInput.value = "";
+  // }
+  toggleSolutionState(false);
 
   // Parse the URL for the 'cubeString' query parameter
   const urlParams = new URLSearchParams(window.location.search);
