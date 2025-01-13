@@ -1223,7 +1223,7 @@ document.body.appendChild(gridContainer);
 // Create Scramble Button
 const scrambleButton = document.createElement("button");
 scrambleButton.textContent = "Scramble";
-scrambleButton.classList.add("scrambleButton");
+scrambleButton.classList.add("scrambleButton","gridButton");
 scrambleButton.addEventListener("click", async () => {
     if (!isRotating && !isExecutingMoves) {
         scrambleButton.disabled = true;
@@ -1250,7 +1250,7 @@ scrambleButton.addEventListener("click", async () => {
 // Create Reset Button
 const resetButton = document.createElement("button");
 resetButton.textContent = "Reset";
-resetButton.classList.add("resetButton");
+resetButton.classList.add("resetButton","gridButton");
 resetButton.addEventListener("click", () => {
     resetCube();
 
@@ -1269,8 +1269,9 @@ resetButton.addEventListener("click", () => {
 });
 
 const solveButton = document.createElement("button");
-solveButton.id = "solveButton";
+// solveButton.id = "solveButton";
 solveButton.textContent = "Solve";
+solveButton.classList.add("solveButton","gridButton");
 
 // The event listeners remain the same as in your original code
 solveButton.addEventListener("click", async () => {
@@ -1345,7 +1346,8 @@ solveButton.addEventListener("click", async () => {
 });
 
 const scanButton = document.createElement("button");
-scanButton.id = "scanButton";
+// scanButton.id = "scanButton";
+scanButton.classList.add("scanButton","gridButton");
 scanButton.textContent = "Scan";
 
 scanButton.addEventListener("click", () => {

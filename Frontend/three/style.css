@@ -57,36 +57,45 @@ z-index: 1000;
 }
 
 /* Large screens (Laptops/Desktops) */
+
 @media (min-width: 1024px) {
 #gridContainer {
   left: calc(50% + clamp(210px, 8vw, 250px));
+  bottom: clamp(15px, 3vh, 30px);
 }
+#inputContainer {
+  left: calc(50% - clamp(500px, 15vw, 1000px));
+  width: clamp(150px, 22vw, 250px);
 } 
 
+}
+
 /* Medium screens (Tablets) */
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (min-width: 768px) and (max-width: 1023.99px) {
 #inputContainer {
-  left: clamp(200px, 8vw, 60px);
+  left: clamp(0px, 8vw, 60px);
   width: clamp(200px, 22vw, 280px);
 }
 #gridContainer {
-  right: calc(clamp(235px, 8vh, 60px));
+  right: clamp(95px, 6vh, 150px);
+  bottom: clamp(15px, 3vh, 30px);
 }
 }
 
 /* Small screens (Phones) */
-@media (max-width: 767px) {
-.button-container {
+@media (max-device-width: 767px) {
+/* .button-container {
   bottom: clamp(250px, 3vh, 30px);
-  gap: 15px; 
-}
+  gap: 5px; 
+} */
 #inputContainer {
-  left: clamp(150px, 8vw, 60px);
-  width: clamp(250px, 22vw, 280px);
+  left: clamp(30px, 5vw, 60px);
+  width: clamp(200px, 22vw, 280px);
 }
 #gridContainer {
-  right: calc(clamp(150px, 8vh, 60px));
+  right: clamp(10px, 5vh, 0px);
   width: clamp(250px, 22vw, 280px);
+  bottom: clamp(10px, 3vh, 35px);
 }
 
 }
@@ -315,7 +324,7 @@ button.resetButton:hover {
 }
 
 /* Solve Button Styles */
-#solveButton {
+.solveButton {
   padding: clamp(12px, 1.8vh, 18px);
   font-size: clamp(13px, 1.3vw, 15px);
   font-weight: bold;
@@ -334,12 +343,12 @@ button.resetButton:hover {
 }
 
 /* Solve Button Hover Effects */
-#solveButton:hover {
+.solveButton:hover {
   background: linear-gradient(165deg, rgba(45, 135, 45, 0.95), rgba(35, 115, 35, 0.95));
 }
 
 /* Scan Button Styles */
-#scanButton {
+.scanButton {
   padding: clamp(12px, 1.8vh, 18px);
   font-size: clamp(13px, 1.3vw, 15px);
   font-weight: bold;
@@ -358,11 +367,11 @@ button.resetButton:hover {
 }
 
 /* Scan Button Hover Effects */
-#scanButton:hover {
+.scanButton:hover {
   background: linear-gradient(165deg, rgba(65, 145, 200, 0.95), rgba(55, 125, 180, 0.95));
 }
 
-#scanButton:active {
+.scanButton:active {
   border-color: rgba(255, 255, 255, 0.25);
 }
 #movesCountContainer {

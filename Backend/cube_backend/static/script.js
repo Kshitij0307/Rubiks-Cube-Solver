@@ -129,7 +129,7 @@ showStatus("Switching camera...");
 await initCamera();
 }
 
-async function restartCamera() {
+async function restart() {
 try {
     console.log("Starting reset...");  // Debug log
     const response = await fetch("https://rubiks-cube-solver-eyq4.onrender.com/api/scan/reset/", {
@@ -200,7 +200,7 @@ try {
         showStatus("Cube scanned successfully! Redirecting...", 2000);
         setTimeout(() => {
             // Redirect with cubeString as a query parameter
-            window.location.href = `http://localhost:5173/?cubeString=${encodeURIComponent(data.cube_string)}`;
+            window.location.href = `https://rubiks-cube-solver-flax.vercel.app/?cubeString=${encodeURIComponent(data.cube_string)}`;
         }, 2000);
     } else {
         showStatus(data.message, 3000);

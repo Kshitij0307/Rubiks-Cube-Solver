@@ -194,6 +194,7 @@ def verify(request):
         'message': 'Only POST requests are allowed'
     }, status=400)
 
+@csrf_exempt
 def reset(request):
     global cube_state, current_face
     # print("Reset endpoint called!")  # Debug print
