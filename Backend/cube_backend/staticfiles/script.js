@@ -129,7 +129,7 @@ showStatus("Switching camera...");
 await initCamera();
 }
 
-async function restartCamera() {
+async function restart() {
 try {
     console.log("Starting reset...");  // Debug log
     const response = await fetch("https://rubiks-cube-solver-eyq4.onrender.com/api/scan/reset/", {

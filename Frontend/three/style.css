@@ -55,6 +55,23 @@ box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 border: 1px solid rgba(255, 255, 255, 0.1);
 z-index: 1000;
 }
+#movesCountContainer {
+  display: block;
+  position: fixed;
+  bottom: calc(clamp(10px, 3vh, 30px) + clamp(170px, 13vh, 145px));
+  left: clamp(135px, 8vw, 60px);
+  width: clamp(200px, 22vw, 280px);
+  font-size: clamp(13px, 1.3vw, 15px);
+  color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  padding: 5px;
+  background: rgba(20, 25, 45, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: clamp(8px, 1.5vw, 12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+}
 
 /* Large screens (Laptops/Desktops) */
 
@@ -84,20 +101,19 @@ z-index: 1000;
 
 /* Small screens (Phones) */
 @media (max-device-width: 767px) {
-/* .button-container {
-  bottom: clamp(250px, 3vh, 30px);
-  gap: 5px; 
-} */
+.button-container {
+  bottom: clamp(30px, 5vh, 50px);
+}
 #inputContainer {
   left: clamp(30px, 5vw, 60px);
   width: clamp(200px, 22vw, 280px);
+  bottom: clamp(30px, 5vh, 50px);
 }
 #gridContainer {
   right: clamp(10px, 5vh, 0px);
   width: clamp(250px, 22vw, 280px);
-  bottom: clamp(10px, 3vh, 35px);
+  bottom: clamp(30px, 5vh, 55px);
 }
-
 }
 
 
@@ -374,21 +390,5 @@ button.resetButton:hover {
 .scanButton:active {
   border-color: rgba(255, 255, 255, 0.25);
 }
-#movesCountContainer {
-  display: block;
-  position: fixed;
-  bottom: calc(clamp(10px, 3vh, 30px) + clamp(170px, 13vh, 145px));
-  left: clamp(135px, 8vw, 60px);
-  width: clamp(200px, 22vw, 280px);
-  font-size: clamp(13px, 1.3vw, 15px);
-  color: rgba(255, 255, 255, 0.9);
-  text-align: center;
-  padding: 5px;
-  background: rgba(20, 25, 45, 0.3);
-  backdrop-filter: blur(10px);
-  border-radius: clamp(8px, 1.5vw, 12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  z-index: 1001;
-}
+
 

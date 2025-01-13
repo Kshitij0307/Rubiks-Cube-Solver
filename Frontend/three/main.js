@@ -1150,6 +1150,22 @@ if (!movesCountContainer) {
   document.body.appendChild(newContainer);
 }
 
+function adjustMovesCountContainer() {
+  const inputContainer = document.getElementById('inputContainer');
+  const movesCountContainer = document.getElementById('movesCountContainer');
+  
+  if (inputContainer && movesCountContainer) {
+    const inputContainerHeight = inputContainer.offsetHeight;
+    const offset = 30; // Adjust this value to set the desired distance above the inputContainer
+    movesCountContainer.style.bottom = `${inputContainerHeight + offset}px`;
+    movesCountContainer.style.left = window.getComputedStyle(inputContainer).left;
+    movesCountContainer.style.width = window.getComputedStyle(inputContainer).width;
+  }
+}
+
+// Adjust the position on window load and resize
+window.addEventListener('load', adjustMovesCountContainer);
+window.addEventListener('resize', adjustMovesCountContainer);
 
 // Function to toggle between normal and solution states
 function toggleSolutionState(showSolution, moveCount = 0,moves = "") {
@@ -1171,14 +1187,14 @@ function toggleSolutionState(showSolution, moveCount = 0,moves = "") {
 
   if (showSolution && moveCount > 0) {
     // console.log(moveCount)
-    console.log(movesCountContainer)
+    // console.log(movesCountContainer)
     if(movesCountContainer == null){
         const container = document.createElement("div");
         container.id = "movesCountContainer";
         document.body.appendChild(container);
         movesCountContainer = container;
-
     }
+    adjustMovesCountContainer();
     movesCountContainer.style.display = "block";
     movesCountContainer.textContent = `Number of Moves: ${moveCount}`;
     moveButton.textContent = "Show Steps";
