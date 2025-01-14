@@ -1164,8 +1164,7 @@ function adjustMovesCountContainer() {
 }
 
 // Adjust the position on window load and resize
-window.addEventListener('load', adjustMovesCountContainer);
-window.addEventListener('resize', adjustMovesCountContainer);
+// window.addEventListener('load', adjustMovesCountContainer);
 
 // Function to toggle between normal and solution states
 function toggleSolutionState(showSolution, moveCount = 0,moves = "") {
@@ -1291,6 +1290,7 @@ solveButton.classList.add("solveButton","gridButton");
 
 // The event listeners remain the same as in your original code
 solveButton.addEventListener("click", async () => {
+  if (isRotating || isExecutingMoves) return;
     const currentState = getCurrentCubeState();
 
     const isValid = currentState.every((face) =>
@@ -1329,8 +1329,10 @@ solveButton.addEventListener("click", async () => {
             return;
         }
 
-        if(moveCount == 0)
+        if(data.no_of_moves == 0){
           showErrorPopup("Cube already in solved state");
+          return;
+        }
 
         toggleSolutionState(true, data.no_of_moves, data.moves);
         // const moveButton = document.getElementById("moveButton");
@@ -1525,3 +1527,4 @@ window.addEventListener('load', () => {
       // console.log('No cube string found in the URL.');
   }
 });
+window.addEventListener('resize', adjustMovesCountContainer);
