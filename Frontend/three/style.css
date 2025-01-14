@@ -72,49 +72,47 @@ z-index: 1000;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   z-index: 1001;
 }
-
-/* Large screens (Laptops/Desktops) */
-
-@media (min-width: 1024px) {
-#gridContainer {
-  left: calc(50% + clamp(210px, 8vw, 250px));
-  bottom: clamp(15px, 3vh, 30px);
-}
-#inputContainer {
-  left: calc(50% - clamp(500px, 15vw, 1000px));
-  width: clamp(150px, 22vw, 250px);
-} 
-
-}
-
-/* Medium screens (Tablets) */
-@media (min-width: 768px) and (max-width: 1023.99px) {
-#inputContainer {
-  left: clamp(0px, 8vw, 60px);
-  width: clamp(200px, 22vw, 280px);
-}
-#gridContainer {
-  right: clamp(95px, 6vh, 150px);
-  bottom: clamp(15px, 3vh, 30px);
-}
+/* Input styles */
+textarea {
+  padding: clamp(12px, 1.8vh, 18px);
+  font-size: clamp(15px, 1.3vw, 25px);
+  font-family: 'Arial', sans-serif;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: clamp(8px, 1.5vw, 12px);
+  background: linear-gradient(165deg, rgba(30, 35, 60, 0.95), rgba(20, 25, 45, 0.95));
+  color: rgba(255, 255, 255, 0.9);
+  width: 100%;
+  height: clamp(45px, 8vh, 60px);
+  resize: none;
+  outline: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 2px 10px rgba(255, 255, 255, 0.05), 0 0 20px rgba(30, 35, 60, 0.5);
+  backdrop-filter: blur(5px);
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
-/* Small screens (Phones) */
-@media (max-device-width: 767px) {
-.button-container {
-  bottom: clamp(30px, 5vh, 50px);
+/* Placeholder styles */
+textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.5px;
 }
-#inputContainer {
-  left: clamp(30px, 5vw, 60px);
-  width: clamp(200px, 22vw, 280px);
-  bottom: clamp(30px, 5vh, 50px);
+
+/* Scrollbar styles */
+textarea::-webkit-scrollbar {
+  width: 6px;
 }
-#gridContainer {
-  right: clamp(10px, 5vh, 0px);
-  width: clamp(250px, 22vw, 280px);
-  bottom: clamp(30px, 5vh, 55px);
+textarea::-webkit-scrollbar-track {
+  background: transparent;
 }
+textarea::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
 }
+
+
 
 
 button {
@@ -151,45 +149,7 @@ button:active {
 
 
 
-/* Input styles */
-textarea {
-  padding: clamp(12px, 1.8vh, 18px);
-  font-size: clamp(13px, 1.3vw, 15px);
-  font-family: 'Arial', sans-serif;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: clamp(8px, 1.5vw, 12px);
-  background: linear-gradient(165deg, rgba(30, 35, 60, 0.95), rgba(20, 25, 45, 0.95));
-  color: rgba(255, 255, 255, 0.9);
-  width: 100%;
-  height: clamp(45px, 8vh, 60px);
-  resize: none;
-  outline: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 2px 10px rgba(255, 255, 255, 0.05), 0 0 20px rgba(30, 35, 60, 0.5);
-  backdrop-filter: blur(5px);
-  letter-spacing: 0.5px;
-  line-height: 1.4;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-}
 
-/* Placeholder styles */
-textarea::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-  letter-spacing: 0.5px;
-}
-
-/* Scrollbar styles */
-textarea::-webkit-scrollbar {
-  width: 6px;
-}
-textarea::-webkit-scrollbar-track {
-  background: transparent;
-}
-textarea::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
-}
 
 /* Button container */
 #buttonContainer {
@@ -391,4 +351,66 @@ button.resetButton:hover {
   border-color: rgba(255, 255, 255, 0.25);
 }
 
+/* Large screens (Laptops/Desktops) */
 
+@media (min-width: 1024px) {
+  #gridContainer {
+    left: calc(50% + clamp(210px, 8vw, 250px));
+    bottom: clamp(15px, 3vh, 30px);
+  }
+  #inputContainer {
+    left: calc(50% - clamp(500px, 15vw, 1000px));
+    width: clamp(150px, 22vw, 250px);
+  } 
+  
+  }
+  
+  /* Medium screens (Tablets) */
+  @media (min-width: 768px) and (max-width: 1023.99px) {
+  #inputContainer {
+    left: clamp(0px, 8vw, 60px);
+    width: clamp(200px, 22vw, 280px);
+  }
+  #gridContainer {
+    right: clamp(95px, 6vh, 150px);
+    bottom: clamp(15px, 3vh, 30px);
+  }
+  }
+  
+  /* Small screens (Phones) */
+  @media (max-device-width: 767px) {
+  .button-container {
+    bottom: clamp(30px, 5vh, 50px);
+    left: calc(50% + clamp(30px, 5vw, 40px));
+  }
+  #inputContainer {
+    left: clamp(30px, 5vw, 60px);
+    width: clamp(240px, 22vw, 300px);
+    bottom: clamp(30px, 5vh, 50px);
+  }
+  #gridContainer {
+    right: clamp(10px, 5vh, 0px);
+    width: clamp(150px, 20vw, 250px);
+    bottom: clamp(30px, 5vh, 55px);
+    gap:10px;
+  }
+  textarea {
+    font-size: clamp(18px, 1.3vw, 30px);
+  }
+  button.scrambleButton {
+    font-size: clamp(16px, 1.3vw, 20px);
+    padding: clamp(5px, 1.5vh, 10px);
+  }
+  button.scanButton {
+    font-size: clamp(16px, 1.3vw, 20px);
+    padding: clamp(5px, 1.5vh, 10px);
+  }
+  button.solveButton {
+    font-size: clamp(16px, 1.3vw, 20px);
+    padding: clamp(5px, 1.5vh, 10px);
+  }
+  button.resetButton {
+    font-size: clamp(16px, 1.3vw, 20px);
+    padding: clamp(5px, 1.5vh, 10px);
+  }
+  }

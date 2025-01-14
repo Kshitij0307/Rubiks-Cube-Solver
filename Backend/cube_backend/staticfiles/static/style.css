@@ -157,3 +157,25 @@ body {
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
+    /* Popup styling */
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    color: red;
+    font-size: 18px;
+    padding: 20px;
+    border: 2px solid red;
+    border-radius: 5px;
+    display: none;  /* Hide by default */
+    z-index: 9999;
+  }
+  
+  /* Media query for devices with width less than 500px */
+  @media (max-width: 500px) {
+    .popup {
+      display: block; /* Show the popup when width is less than 500px */
+    }
+  }
