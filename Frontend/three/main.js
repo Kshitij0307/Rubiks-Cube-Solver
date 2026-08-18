@@ -156,10 +156,40 @@ controls.panSpeed = 0.5; // Slower panning (default is 1.0)
 
 controls.update();
 
-let ROTATION_DURATION = 300; // milliseconds
+let ROTATION_DURATION = 500; // milliseconds
 
 function degToRad(degrees) {
   return degrees * (Math.PI / 180);
+}
+
+// Single source of truth for the face name <-> notation letter correspondence
+// (e.g. "front" <-> "F"), shared by the move indicator, the manual move
+// buttons, and every place that turns typed/solver notation back into a face.
+const FACE_LETTERS = [
+  ["right", "R"],
+  ["left", "L"],
+  ["up", "U"],
+  ["down", "D"],
+  ["front", "F"],
+  ["back", "B"],
+];
+const faceToLetter = Object.fromEntries(FACE_LETTERS);
+const letterToFace = Object.fromEntries(
+  FACE_LETTERS.map(([face, letter]) => [letter.toLowerCase(), face])
+);
+
+// Live move indicator (e.g. "F", "F'") shown above the cube while a face turns
+const moveIndicator = document.createElement("div");
+moveIndicator.id = "moveIndicator";
+document.body.appendChild(moveIndicator);
+
+function showMoveIndicator(face, clockwise, label) {
+  moveIndicator.textContent = label || faceToLetter[face] + (clockwise ? "" : "'");
+  moveIndicator.classList.add("visible");
+}
+
+function hideMoveIndicator() {
+  moveIndicator.classList.remove("visible");
 }
 
 function getFaceCubies(face, layer) {
@@ -233,12 +263,15 @@ function createArrowForFace(face, clockwise) {
 }
 
 // Modify rotateFace to accept skipArrow parameter
-function rotateFace(face, clockwise = true, skipArrow = false) {
+// `label` optionally overrides the displayed notation (e.g. "U2" for a double
+// move, which is executed as two separate rotateFace calls under the hood).
+function rotateFace(face, clockwise = true, skipArrow = false, label = null) {
   return new Promise((resolve) => {
     if (isRotating || isTypingMoves) {
       return;
     }
     isRotating = true;
+    showMoveIndicator(face, clockwise, label);
 
     // Remove existing arrow
     if (rotationArrow) {
@@ -324,6 +357,7 @@ function rotateFace(face, clockwise = true, skipArrow = false) {
 
         scene.remove(pivot);
         isRotating = false;
+        hideMoveIndicator();
 
         if (rotationArrow) {
           scene.remove(rotationArrow);
@@ -513,20 +547,15 @@ function createMoveButtons() {
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("button-container");
 
-  const moves = [
-    { label: "U", face: "up", clockwise: true },
-    { label: "F", face: "front", clockwise: true },
-    { label: "R", face: "right", clockwise: true },
-    { label: "B", face: "back", clockwise: true },
-    { label: "L", face: "left", clockwise: true },
-    { label: "D", face: "down", clockwise: true },
-    { label: "U'", face: "up", clockwise: false },
-    { label: "F'", face: "front", clockwise: false },
-    { label: "R'", face: "right", clockwise: false },
-    { label: "B'", face: "back", clockwise: false },
-    { label: "L'", face: "left", clockwise: false },
-    { label: "D'", face: "down", clockwise: false },
-  ];
+  // Display order: all 6 clockwise buttons, then all 6 counter-clockwise
+  const buttonFaceOrder = ["up", "front", "right", "back", "left", "down"];
+  const moves = [true, false].flatMap((clockwise) =>
+    buttonFaceOrder.map((face) => ({
+      face,
+      clockwise,
+      label: faceToLetter[face] + (clockwise ? "" : "'"),
+    }))
+  );
 
   moves.forEach(({ label, face, clockwise }) => {
     const button = document.createElement("button");
@@ -748,35 +777,17 @@ async function handleControlAction(action) {
         const isDouble = lastMove.includes("2");
         const isCounterClockwise = lastMove.includes("'");
 
-        let faceToRotate;
-        switch (face) {
-          case "r":
-            faceToRotate = "right";
-            break;
-          case "l":
-            faceToRotate = "left";
-            break;
-          case "u":
-            faceToRotate = "up";
-            break;
-          case "d":
-            faceToRotate = "down";
-            break;
-          case "f":
-            faceToRotate = "front";
-            break;
-          case "b":
-            faceToRotate = "back";
-            break;
-          default:
-            console.error("Invalid move:", face);
-            return;
+        const faceToRotate = letterToFace[face];
+        if (!faceToRotate) {
+          console.error("Invalid move:", face);
+          return;
         }
 
         if (isDouble) {
           // For double moves (U2), perform the same move again
-          await rotateFace(faceToRotate, !isCounterClockwise);
-          await rotateFace(faceToRotate, !isCounterClockwise);
+          const label = faceToLetter[faceToRotate] + "2";
+          await rotateFace(faceToRotate, !isCounterClockwise, false, label);
+          await rotateFace(faceToRotate, !isCounterClockwise, false, label);
         } else {
           // For single moves (U or U'), perform the inverse
           await rotateFace(faceToRotate, isCounterClockwise);
@@ -835,20 +846,10 @@ async function executeMoveAtIndex(index) {
 
   const executeSingleMove = async () => {
     await rotateFace(
-      face === "r"
-        ? "right"
-        : face === "l"
-        ? "left"
-        : face === "u"
-        ? "up"
-        : face === "d"
-        ? "down"
-        : face === "f"
-        ? "front"
-        : face === "b"
-        ? "back"
-        : null,
-      !isCounterClockwise
+      letterToFace[face],
+      !isCounterClockwise,
+      false,
+      isDouble ? face.toUpperCase() + "2" : null
     );
   };
 
@@ -976,8 +977,9 @@ async function scrambleCube() {
 
       // Execute the move
       if (move.moveType === "double") {
-        await rotateFace(move.face, true, true);
-        await rotateFace(move.face, true, true);
+        const label = faceToLetter[move.face] + "2";
+        await rotateFace(move.face, true, true, label);
+        await rotateFace(move.face, true, true, label);
       } else {
         await rotateFace(move.face, move.moveType !== "prime", true);
       }
@@ -993,8 +995,9 @@ async function scrambleCube() {
       ) {
         scrambleSequence.push(lastMove);
         if (lastMove.moveType === "double") {
-          await rotateFace(lastMove.face, true, true);
-          await rotateFace(lastMove.face, true, true);
+          const label = faceToLetter[lastMove.face] + "2";
+          await rotateFace(lastMove.face, true, true, label);
+          await rotateFace(lastMove.face, true, true, label);
         } else {
           await rotateFace(lastMove.face, lastMove.moveType !== "prime", true);
         }

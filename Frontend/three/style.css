@@ -224,6 +224,27 @@ button:active {
   object-fit: cover;
 }
 
+/* Live move indicator, shown above the cube while a face is turning */
+#moveIndicator {
+  position: fixed;
+  top: clamp(90px, 14vh, 160px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Arial', sans-serif;
+  font-weight: bold;
+  font-size: clamp(32px, 6vw, 56px);
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.4), 0 4px 15px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+#moveIndicator.visible {
+  opacity: 1;
+}
+
 .popup {
   position: fixed;
   top: 20px;
