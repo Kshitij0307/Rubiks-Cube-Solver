@@ -58,8 +58,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     'https://rubiks-cube-solver-flax.vercel.app',
-    'https://*.vercel.app',
-    'https://*.now.sh',
+    'https://rubiks-cube-solver-by-kshitij.vercel.app',
     'http://127.0.0.1',
     'http://localhost:5173',
     'http://localhost:5174',
