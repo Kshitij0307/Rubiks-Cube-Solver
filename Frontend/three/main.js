@@ -271,7 +271,6 @@ function rotateFace(face, clockwise = true, skipArrow = false, label = null) {
       return;
     }
     isRotating = true;
-    showMoveIndicator(face, clockwise, label);
 
     // Remove existing arrow
     if (rotationArrow) {
@@ -279,10 +278,12 @@ function rotateFace(face, clockwise = true, skipArrow = false, label = null) {
       rotationArrow = null;
     }
 
-    // Only create arrow if not skipping
+    // Only show the arrow + move-notation text when not skipping (scramble
+    // passes skipArrow=true for every move, so neither shows up then)
     if (!skipArrow) {
       rotationArrow = createArrowForFace(face, clockwise);
       scene.add(rotationArrow);
+      showMoveIndicator(face, clockwise, label);
     }
 
     const layer =
@@ -543,6 +544,11 @@ window.addEventListener("resize", () => {
 
 const manualMoveButtons = [];
 
+// Assigned inside createActionButtons() (it closes over the grid buttons
+// created there), but declared here at module scope so createMoveInput()'s
+// moveButton handler - a separate top-level function - can call it too.
+let setActionControlsDisabled;
+
 function createMoveButtons() {
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("button-container");
@@ -621,12 +627,14 @@ function createMoveInput() {
     if (!sequence || isExecutingMoves) return;
 
     isExecutingMoves = true;
+    setActionControlsDisabled(true);
     currentMoveSequence = sequence.split(/\s+/).map(move => move.toLowerCase())
 
     const isValid = isValidMoveSequence(currentMoveSequence);
     if(!isValid) {
       showErrorPopup("Invalid move sequence");
       isExecutingMoves = false;
+      setActionControlsDisabled(false);
       return;
     }
 
@@ -654,6 +662,7 @@ function createMoveInput() {
       console.error("Error executing moves:", error);
     } finally {
       isExecutingMoves = false;
+      setActionControlsDisabled(false);
     }
   });
 
@@ -766,10 +775,32 @@ function createControlButtons() {
 }
 
 
+// Keep the play/pause button's icon/title in sync with isPaused when it
+// changes from somewhere other than that button's own click handler
+// (e.g. "prev"/"next" auto-pausing the sequence).
+function syncPlayPauseIcon() {
+  const playPauseButton = document.querySelector(
+    '#moveControls button[title="Play"], #moveControls button[title="Pause"]'
+  );
+  if (!playPauseButton) return;
+  const image = playPauseButton.querySelector("img");
+  if (image) image.src = isPaused ? "images/play.jpg" : "images/pause.jpg";
+  playPauseButton.title = isPaused ? "Play" : "Pause";
+}
+
 // Add this function to handle control actions
 async function handleControlAction(action) {
   switch (action) {
     case "prev":
+      // Stepping manually must stop the auto-play loop (continueMoveSequence)
+      // first - otherwise a rapid click can race that loop's own in-flight
+      // rotateFace call, which never resolves if it collides (see
+      // rotateFace's isRotating guard), permanently hanging the sequence and
+      // leaving the disabled controls stuck. Pausing here (instead of just
+      // requiring isPaused already) keeps "spam next/prev to fast-forward"
+      // working even if playback wasn't paused first.
+      isPaused = true;
+      syncPlayPauseIcon();
       if (currentMoveIndex > 0 && !isRotating) {
         currentMoveIndex--;
         const lastMove = currentMoveSequence[currentMoveIndex];
@@ -795,6 +826,9 @@ async function handleControlAction(action) {
       }
       break;
     case "next":
+      // Same reasoning as "prev" above.
+      isPaused = true;
+      syncPlayPauseIcon();
       if (currentMoveIndex < currentMoveSequence.length && !isRotating) {
         await executeMoveAtIndex(currentMoveIndex);
         currentMoveIndex++;
@@ -1309,12 +1343,8 @@ scrambleButton.textContent = "Scramble";
 scrambleButton.classList.add("scrambleButton","gridButton");
 scrambleButton.addEventListener("click", async () => {
     if (!isRotating && !isExecutingMoves) {
-        scrambleButton.disabled = true;
-        scrambleButton.style.opacity = "0.5";
-        manualMoveButtons.forEach((btn) => {
-            btn.disabled = true;
-            btn.style.opacity = "0.5";
-        });
+        setActionControlsDisabled(true);
+        scrambleButton.textContent = "Scrambling...";
         const moveButton = document.getElementById("moveButton");
         const moveControls = document.getElementById("moveControls");
         const moveInput = document.querySelector("textarea");
@@ -1329,12 +1359,8 @@ scrambleButton.addEventListener("click", async () => {
         if (movesCountContainer) movesCountContainer.style.display = "none";
 
         await scrambleCube();
-        scrambleButton.disabled = false;
-        scrambleButton.style.opacity = "1";
-        manualMoveButtons.forEach((btn) => {
-            btn.disabled = false;
-            btn.style.opacity = "1";
-        });
+        setActionControlsDisabled(false);
+        scrambleButton.textContent = "Scramble";
     }
 });
 
@@ -1378,9 +1404,8 @@ solveButton.addEventListener("click", async () => {
     }
 
     try {
-        solveButton.disabled = true;
+        setActionControlsDisabled(true);
         solveButton.textContent = "Solving...";
-        solveButton.style.opacity = "0.7";
 
         const response = await fetch("https://rubiks-cube-solver-eyq4.onrender.com/api/solve/", {
             method: "POST",
@@ -1433,9 +1458,8 @@ solveButton.addEventListener("click", async () => {
         console.error("Error solving cube:", error);
         showErrorPopup("Something went wrong while solving the cube");
     } finally {
-        solveButton.disabled = false;
+        setActionControlsDisabled(false);
         solveButton.textContent = "Solve";
-        solveButton.style.opacity = "1";
     }
 });
 
@@ -1462,6 +1486,27 @@ scanButton.addEventListener("mouseleave", () => {
     scanButton.style.background =
         "linear-gradient(165deg, rgba(55, 135, 190, 0.95), rgba(45, 115, 170, 0.95))";
 });
+
+// Disable/enable every action control (grid buttons, manual move buttons,
+// and the move-sequence input) as one unit, so scramble and solve/move
+// playback can't be interrupted or overlapped by anything else.
+setActionControlsDisabled = function (disabled) {
+  [scrambleButton, resetButton, solveButton, scanButton].forEach((btn) => {
+    btn.disabled = disabled;
+    btn.style.opacity = disabled ? "0.5" : "1";
+  });
+
+  manualMoveButtons.forEach((btn) => {
+    btn.disabled = disabled;
+    btn.style.opacity = disabled ? "0.5" : "1";
+  });
+
+  const moveButton = document.getElementById("moveButton");
+  if (moveButton) moveButton.disabled = disabled;
+
+  const moveInput = document.querySelector("textarea");
+  if (moveInput) moveInput.disabled = disabled;
+};
 
 // Add buttons to grid container
 gridContainer.appendChild(scrambleButton);
