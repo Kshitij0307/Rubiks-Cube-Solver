@@ -235,7 +235,9 @@ function createArrowForFace(face, clockwise) {
 // Modify rotateFace to accept skipArrow parameter
 function rotateFace(face, clockwise = true, skipArrow = false) {
   return new Promise((resolve) => {
-    if (isRotating || isTypingMoves) return;
+    if (isRotating || isTypingMoves) {
+      return;
+    }
     isRotating = true;
 
     // Remove existing arrow
@@ -377,6 +379,49 @@ window.addEventListener("keydown", (event) => {
 // Create the Rubik's cube
 const cubeGroup = new THREE.Group();
 
+// Face-notation labels (U/F/R/B/L/D), one fixed marker per face.
+// Drawn as a small, low-opacity, darkened-tint texture so it stays subtle.
+// Attached to cubeGroup directly (NOT to any cubie) and positioned just
+// outside the whole cube, so they never spin during face-turn animations
+// and stay readable at all times.
+const faceLabelConfigs = [
+  { letter: "R", color: cubeColors.red, position: [1.476, 0, 0], rotation: [0, Math.PI / 2, 0] },
+  { letter: "L", color: cubeColors.orange, position: [-1.476, 0, 0], rotation: [0, -Math.PI / 2, 0] },
+  { letter: "U", color: cubeColors.white, position: [0, 1.476, 0], rotation: [-Math.PI / 2, 0, 0] },
+  { letter: "D", color: cubeColors.yellow, position: [0, -1.476, 0], rotation: [Math.PI / 2, 0, 0] },
+  { letter: "F", color: cubeColors.green, position: [0, 0, 1.476], rotation: [0, 0, 0] },
+  { letter: "B", color: cubeColors.blue, position: [0, 0, -1.476], rotation: [0, Math.PI, 0] },
+];
+
+function createFaceLabel(letter, baseColorHex) {
+  const size = 128;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+
+  // Darken + tint the sticker's own color for a subtle, low-contrast mark
+  const labelColor = new THREE.Color(baseColorHex).multiplyScalar(0.35);
+  ctx.fillStyle = `rgba(${Math.round(labelColor.r * 255)}, ${Math.round(
+    labelColor.g * 255
+  )}, ${Math.round(labelColor.b * 255)}, 0.55)`;
+  ctx.font = "bold 150px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(letter, size / 2, size / 2 + 4);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const material = new THREE.MeshBasicMaterial({
+    map: texture,
+    transparent: true,
+    depthWrite: false,
+  });
+  const geometry = new THREE.PlaneGeometry(0.35, 0.35);
+  const label = new THREE.Mesh(geometry, material);
+  label.renderOrder = 1;
+  return label;
+}
+
 // Function to create a single cubie
 function createCubie(x, y, z) {
   const geometry = new THREE.BoxGeometry(0.95, 0.95, 0.95);
@@ -407,6 +452,7 @@ function createCubie(x, y, z) {
   cubie.castShadow = true;
   cubie.receiveShadow = true;
   cubie.position.set(x, y, z);
+
   return cubie;
 }
 
@@ -419,6 +465,22 @@ for (let x = -1; x <= 1; x++) {
     }
   }
 }
+
+// Add the 6 fixed face-notation labels to their own group, added directly to
+// the scene (NOT to cubeGroup/any cubie). Two reasons this matters:
+//  1. Face turns never rotate them - they stay upright and readable.
+//  2. cubeGroup.children is walked elsewhere (getCurrentCubeState, resetCube)
+//     assuming every child is a cubie with a 6-material array; a label mesh
+//     only has one plain material, so mixing them into cubeGroup breaks
+//     those `.material.forEach(...)` calls.
+const faceLabelGroup = new THREE.Group();
+faceLabelConfigs.forEach((config) => {
+  const label = createFaceLabel(config.letter, config.color);
+  label.position.set(...config.position);
+  label.rotation.set(...config.rotation);
+  faceLabelGroup.add(label);
+});
+scene.add(faceLabelGroup);
 
 scene.add(cubeGroup);
 
@@ -445,6 +507,8 @@ window.addEventListener("resize", () => {
 });
 
 
+const manualMoveButtons = [];
+
 function createMoveButtons() {
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("button-container");
@@ -470,6 +534,7 @@ function createMoveButtons() {
 
     button.addEventListener("click", () => rotateFace(face, clockwise));
     buttonContainer.appendChild(button);
+    manualMoveButtons.push(button);
   });
 
   document.body.appendChild(buttonContainer);
@@ -1243,6 +1308,10 @@ scrambleButton.addEventListener("click", async () => {
     if (!isRotating && !isExecutingMoves) {
         scrambleButton.disabled = true;
         scrambleButton.style.opacity = "0.5";
+        manualMoveButtons.forEach((btn) => {
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+        });
         const moveButton = document.getElementById("moveButton");
         const moveControls = document.getElementById("moveControls");
         const moveInput = document.querySelector("textarea");
@@ -1259,6 +1328,10 @@ scrambleButton.addEventListener("click", async () => {
         await scrambleCube();
         scrambleButton.disabled = false;
         scrambleButton.style.opacity = "1";
+        manualMoveButtons.forEach((btn) => {
+            btn.disabled = false;
+            btn.style.opacity = "1";
+        });
     }
 });
 
