@@ -41,11 +41,12 @@ try {
     context.imageSmoothingEnabled = true;
     context.imageSmoothingQuality = 'high';
     // The live preview is mirrored via CSS (#cameraFeed { transform: scaleX(-1) }
-    // in style.css) so on-screen movement matches real movement. Flip the
-    // capture to match, otherwise the saved photo would come out as a
-    // left-right mirror image of what the user just saw and lined up.
-    context.translate(canvas.width, 0);
-    context.scale(-1, 1);
+    // in style.css) purely for the user's benefit, so on-screen movement
+    // matches real movement while aligning the cube - it never touches the
+    // actual video frame data. Capture that raw, un-mirrored frame as-is
+    // (no flip here) so the backend always sees the cube face in its true
+    // orientation; the backend mirrors its own copy for the confirmation
+    // image it sends back, so that still matches what was just seen here.
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     showStatus("Processing image...", 2000);

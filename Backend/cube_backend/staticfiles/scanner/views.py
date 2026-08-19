@@ -5,7 +5,7 @@ import cv2 as cv
 import numpy as np
 import base64
 import json
-from .final import process_frame
+from .sticker_detection import process_frame
 from collections import Counter
 
 # Global variable to store cube state
