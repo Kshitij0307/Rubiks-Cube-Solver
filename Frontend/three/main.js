@@ -657,12 +657,15 @@ function createMoveInput() {
     }
 
     try {
+      // Note: this can resolve because playback merely paused, not just
+      // because it finished - continueMoveSequence() itself only re-enables
+      // the other action controls once the sequence is genuinely done (see
+      // finalizePlaybackControls), so nothing further is needed here on the
+      // success path. Only an actual error should force controls back on.
       await continueMoveSequence();
     } catch (error) {
       console.error("Error executing moves:", error);
-    } finally {
-      isExecutingMoves = false;
-      setActionControlsDisabled(false);
+      finalizePlaybackControls();
     }
   });
 
@@ -844,7 +847,7 @@ async function handleControlAction(action) {
       isPaused = true;
       currentMoveIndex = 0;
       currentMoveSequence = [];
-      isExecutingMoves = false;
+      finalizePlaybackControls();
 
       const moveInput = document.querySelector("textarea");
       if (moveInput) {
@@ -902,6 +905,28 @@ async function continueMoveSequence() {
     currentMoveIndex++;
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
+
+  // The while loop above also exits when playback is merely paused, not
+  // just when the sequence is actually finished (or stopped, which empties
+  // currentMoveSequence). Only re-enable the other action controls in that
+  // "truly done" case - otherwise pausing mid-sequence prematurely
+  // re-enables scramble/reset/solve/scan/manual moves, and hitting "play"
+  // again to resume races against those being clickable. The "stop" action
+  // isn't covered by this check alone (it can fire while playback is
+  // already paused and no loop is in flight to reach here), so it also
+  // calls finalizePlaybackControls() directly - see handleControlAction.
+  if (currentMoveIndex >= currentMoveSequence.length) {
+    finalizePlaybackControls();
+  }
+}
+
+// Re-enable the action controls that setActionControlsDisabled(true) turned
+// off for the duration of move-sequence playback. Called once playback is
+// genuinely over (continueMoveSequence ran out of moves, or "stop" was
+// pressed) - never on a plain pause, which must leave the controls disabled.
+function finalizePlaybackControls() {
+  isExecutingMoves = false;
+  setActionControlsDisabled(false);
 }
 
 // Call createControlButtons after scene setup

@@ -43,6 +43,13 @@ body {
     border-radius: 10px;
     display: block;
     }
+
+    /* Mirror the live preview so moving left/right on screen matches moving
+    left/right in front of the camera, like looking in a mirror. The
+    captured image is flipped to match in script.js's captureImage(). */
+    #cameraFeed {
+    transform: scaleX(-1);
+    }
     
     .status-message {
     position: fixed;

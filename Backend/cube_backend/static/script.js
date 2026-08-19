@@ -40,6 +40,12 @@ try {
     const context = canvas.getContext("2d");
     context.imageSmoothingEnabled = true;
     context.imageSmoothingQuality = 'high';
+    // The live preview is mirrored via CSS (#cameraFeed { transform: scaleX(-1) }
+    // in style.css) so on-screen movement matches real movement. Flip the
+    // capture to match, otherwise the saved photo would come out as a
+    // left-right mirror image of what the user just saw and lined up.
+    context.translate(canvas.width, 0);
+    context.scale(-1, 1);
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     showStatus("Processing image...", 2000);
@@ -50,7 +56,10 @@ try {
 
     console.log("Sending capture request...");  // Debug log
     try {
-        const response = await fetch("https://rubiks-cube-solver-eyq4.onrender.com/api/scan/capture/", {
+        // Relative path (not the hardcoded prod host) so this page talks to
+        // whichever backend is actually serving it - the deployed Render
+        // backend in prod, or `manage.py runserver` when testing locally.
+        const response = await fetch("/api/scan/capture/", {
         method: "POST",
         body: formData,
         headers: {
@@ -132,7 +141,7 @@ await initCamera();
 async function restart() {
 try {
     console.log("Starting reset...");  // Debug log
-    const response = await fetch("https://rubiks-cube-solver-eyq4.onrender.com/api/scan/reset/", {
+    const response = await fetch("/api/scan/reset/", {
     method: "POST",
     headers: {
         "Content-Type": "application/json",
@@ -181,7 +190,7 @@ if (!lastCapturedColors) {
 }
 
 try {
-    const response = await fetch("https://rubiks-cube-solver-eyq4.onrender.com/api/scan/verify/", {
+    const response = await fetch("/api/scan/verify/", {
     method: "POST",
     headers: {
         "Content-Type": "application/json",
