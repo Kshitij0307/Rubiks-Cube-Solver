@@ -1,6 +1,50 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
 import { OrbitControls } from './controls/OrbitControls.js';  // Adjust path as needed
 
+const BACKEND_URL = "https://rubiks-cube-solver-eyq4.onrender.com";
+
+// The backend is hosted on Render's free tier, which spins the service down
+// after a period of inactivity and takes up to ~a minute to spin back up on
+// the next request. Ping a lightweight health endpoint as soon as the page
+// loads so a sleeping instance starts waking up before the user ever hits
+// Solve/Scan.
+let serverReady = false;
+
+function pingHealthCheck() {
+  return fetch(`${BACKEND_URL}/api/health/`)
+    .then((res) => {
+      serverReady = res.ok;
+      return res.ok;
+    })
+    .catch(() => {
+      serverReady = false;
+      return false;
+    });
+}
+
+// Fired immediately, at module load (i.e. as soon as the page loads) — NOT
+// deferred until ensureServerAwake() is called. `ensureServerAwake()` below
+// just awaits this same in-flight/already-resolved promise, so by the time
+// the user clicks Solve/Scan the ping has usually already completed and
+// `serverReady` is already true.
+const serverWarmup = pingHealthCheck();
+
+async function ensureServerAwake() {
+  if (serverReady) return;
+
+  let popup = null;
+  const slowTimer = setTimeout(() => {
+    popup = showInfoPopup(
+      "Waking up the solver server — this can take up to a minute on first use..."
+    );
+  }, 1500);
+
+  await serverWarmup;
+
+  clearTimeout(slowTimer);
+  if (popup) removePopup(popup);
+}
+
 let moveHistory = [];
 let moveCount = 0;
 let rotationArrow = null;
@@ -1254,6 +1298,12 @@ function getCurrentCubeState() {
   return state;
 }
 
+function removePopup(popup) {
+  if (popup && popup.parentNode) {
+    document.body.removeChild(popup);
+  }
+}
+
 function showErrorPopup(message) {
   const popup = document.createElement("div");
   popup.className = "popup";
@@ -1261,11 +1311,17 @@ function showErrorPopup(message) {
   document.body.appendChild(popup);
 
   // Remove popup after 3 seconds
-  setTimeout(() => {
-    if (popup.parentNode) {
-      document.body.removeChild(popup);
-    }
-  }, 3000);
+  setTimeout(() => removePopup(popup), 3000);
+}
+
+// Informational popup (e.g. "waking up the server") that stays visible until
+// the caller explicitly removes it via the returned element + removePopup().
+function showInfoPopup(message) {
+  const popup = document.createElement("div");
+  popup.className = "popup info";
+  popup.textContent = message;
+  document.body.appendChild(popup);
+  return popup;
 }
 
 
@@ -1432,7 +1488,9 @@ solveButton.addEventListener("click", async () => {
         setActionControlsDisabled(true);
         solveButton.textContent = "Solving...";
 
-        const response = await fetch("https://rubiks-cube-solver-eyq4.onrender.com/api/solve/", {
+        await ensureServerAwake();
+
+        const response = await fetch(`${BACKEND_URL}/api/solve/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -1493,8 +1551,21 @@ const scanButton = document.createElement("button");
 scanButton.classList.add("scanButton","gridButton");
 scanButton.textContent = "Scan";
 
-scanButton.addEventListener("click", () => {
-    window.location.href = "https://rubiks-cube-solver-eyq4.onrender.com/api/scan/";
+scanButton.addEventListener("click", async () => {
+    if (isRotating || isExecutingMoves) return;
+
+    setActionControlsDisabled(true);
+    const originalScanText = scanButton.textContent;
+    scanButton.textContent = "Loading...";
+
+    await ensureServerAwake();
+
+    window.location.href = `${BACKEND_URL}/api/scan/`;
+
+    // In case navigation is blocked/cancelled, restore the button rather
+    // than leaving it disabled forever.
+    setActionControlsDisabled(false);
+    scanButton.textContent = originalScanText;
 });
 
 const existingMovesContainer = document.querySelector("#movesCountContainer");

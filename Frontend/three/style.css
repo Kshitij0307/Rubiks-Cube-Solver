@@ -261,6 +261,9 @@ button:active {
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
 }
+.popup.info {
+  background: linear-gradient(165deg, rgba(55, 125, 180, 0.95), rgba(45, 105, 160, 0.95));
+}
 /* #movesCountContainer {
   width: 100%;
   padding: 8px;
